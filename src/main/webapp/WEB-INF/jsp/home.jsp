@@ -37,12 +37,13 @@
             <td>Edit</td>
             <td>Select</td>
         </tr>
-        <c:forEach items = "${song}" var = "song">
+        <c:forEach items = "${song.content}" var = "song">
         <tr>
             <td>${song.id}</td>
             <td>${song.title}</td>
             <td>${song.artist}</td>
             <td>${song.album}</td>
+            <td>${song.date}</td>
             <td>${song.genre}</td>
             <td>${song.rating}</td>
             <form class="delete" method="post" action="/delete/${song.id}?page=${param.page}"><td><input class="delete_btn" type="submit" value="Delete" /></td></form>

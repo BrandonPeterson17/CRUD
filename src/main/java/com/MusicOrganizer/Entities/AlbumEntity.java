@@ -21,46 +21,48 @@ public class AlbumEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "album_seq", nullable = false, insertable = false, updatable = true)
     private long id;
-
-    @Column(name = "title", nullable = false, insertable = true, updatable = true)
-    private String title;
-
-    @Column(name = "date", nullable = true, insertable = true, updatable = true)
-    private String date;
-
-    @OneToMany
-    private Set<SongEntity> songEntities;
-
-    public void setSongEntities(Set<SongEntity> songEntities) {
-        this.songEntities = songEntities;
+    public long getId() {
+        return id;
     }
-
     public void setId(long id) {
         this.id = id;
     }
 
+    @Column(name = "title", nullable = false, insertable = true, updatable = true)
+    private String title;
+    public String getTitle() {
+        return title;
+    }
     public void setTitle(String title) {
         this.title = title;
     }
 
+    @Column(name = "date", nullable = true, insertable = true, updatable = true)
+    private String date;
+    public String getDate() {
+        return date;
+    }
     public void setDate(String date) {
         this.date = date;
     }
 
+    @OneToMany(mappedBy = "albumEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<SongEntity> songEntities;
     public Set<SongEntity> getSongEntities() {
         return songEntities;
     }
-
-    public long getId() {
-        return id;
+    public void setSongEntities(Set<SongEntity> songEntities) {
+        this.songEntities = songEntities;
     }
 
-    public String getTitle() {
-        return title;
+    @ManyToOne
+    @JoinColumn(name = "artist_seq")
+    private ArtistEntity artistEntity;
+    public ArtistEntity getArtistEntity() {
+        return artistEntity;
     }
-
-    public String getDate() {
-        return date;
+    public void setArtistEntity(ArtistEntity artistEntity) {
+        this.artistEntity = artistEntity;
     }
 
 }

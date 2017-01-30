@@ -10,6 +10,7 @@ public class SongDTO {
     private String artist;
     private String album;
     private String genre;
+    private String date;
     private int rating;
 
     public SongDTO() {}
@@ -52,6 +53,14 @@ public class SongDTO {
 
     public void setGenre(String genre) {
         this.genre = genre;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public int getRating() {

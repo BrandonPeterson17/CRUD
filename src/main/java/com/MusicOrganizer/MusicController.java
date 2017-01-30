@@ -1,6 +1,7 @@
 package com.MusicOrganizer;
 
 import com.MusicOrganizer.Entities.AlbumEntity;
+import com.MusicOrganizer.Entities.ArtistEntity;
 import com.MusicOrganizer.Entities.SongDTO;
 import com.MusicOrganizer.Entities.SongEntity;
 import com.MusicOrganizer.Repositories.AlbumRepository;
@@ -50,22 +51,19 @@ public class MusicController {
 
         List<SongEntity> songs = songRepository.findAll();
         List<SongDTO> songsDTO = new ArrayList<>();
-        List<AlbumEntity> albums = albumRepository.findAll();
         for(SongEntity songEntity: songs) {
             SongDTO dto = new SongDTO();
+
+            AlbumEntity albumEntity = songEntity.getAlbumEntity();
+            ArtistEntity artistEntity = albumEntity.getArtistEntity();
+
             dto.setId(songEntity.getId());
             dto.setTitle(songEntity.getTitle());
-            dto.setArtist(songEntity.getArtist());
-            for(AlbumEntity album: albums) {
-                if(album.getSongEntities().contains(songEntity)) {
-                    dto.setAlbum(album.getTitle());
-                    break;
-                }
-            }
-            if (dto.getAlbum() == null) {
-                System.out.println("no album found for " + songEntity.getTitle());
-                dto.setAlbum("(No Album)");
-            }
+            dto.setGenre(songEntity.getGenre());
+            dto.setAlbum(albumEntity.getTitle());
+            dto.setDate(albumEntity.getDate());
+            dto.setArtist(artistEntity.getArtist());
+
             songsDTO.add(dto);
         }
         Page<SongDTO> page = new PageImpl<SongDTO>(songsDTO, pageable, songsDTO.size());
@@ -251,8 +249,6 @@ public class MusicController {
             System.out.println("Input has the following errors:\n" + errorInput.getErrorStrings(ErrorInput.PRINT));
         } else {
             song.setTitle(title);
-            if (!artist.equals(""))
-                song.setArtist(artist);
             if (!genre.equals(""))
                 song.setGenre(genre);
             song.setRating(Integer.parseInt(rating));

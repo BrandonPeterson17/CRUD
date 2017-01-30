@@ -34,7 +34,7 @@ public class ErrorInput {
     //pass in input values to create song entity with
     public ErrorInput(String title, String artist, String genre, String rating,
                       SongRepository songRepository, int id) {
-        songEntity = new SongEntity(title, artist, genre, 0);
+        songEntity = new SongEntity(title, genre, 0);
         this.rating = rating;
         errorMessages = new ArrayList<>();
         this.songRepository = songRepository;
