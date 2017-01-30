@@ -57,7 +57,7 @@ public class SongEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "song_album_album_seq_fk")
+    @JoinColumn(name = "album_seq")
     private AlbumEntity albumEntity;
     public AlbumEntity getAlbumEntity() {
         return albumEntity;

@@ -10,6 +10,12 @@ import java.util.Set;
 @Table(name = "artist")
 public class ArtistEntity {
 
+    public ArtistEntity() {}
+
+    public ArtistEntity(String artist) {
+        this.artist = artist;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "artist_seq", nullable = false, updatable = false)

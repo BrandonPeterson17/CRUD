@@ -49,7 +49,7 @@ public class MusicController {
 
     @ModelAttribute("song")
     public Page<SongDTO> findAllSongs(@PageableDefault(value = 5, page = 0, sort = {"id"}) Pageable pageable, ModelMap modelMap) {
-//        modelMap.addAttribute("", "");
+//        String s = "s";
 //        List<AlbumEntity> albums = albumRepository.findAll();
 //        Set<SongEntity> songEntitySet = albums.get(0).getSongEntities();
 
@@ -59,18 +59,25 @@ public class MusicController {
         List<SongDTO> songsDTO = new ArrayList<>();
         for(SongEntity songEntity: songs) {
             SongDTO dto = new SongDTO();
-
-
-            AlbumEntity albumEntity = songEntity.getAlbumEntity();
-            ArtistEntity artistEntity = albumEntity.getArtistEntity();
-
             dto.setId(songEntity.getId());
             dto.setTitle(songEntity.getTitle());
             dto.setGenre(songEntity.getGenre());
-            dto.setAlbum(albumEntity.getTitle());
-            dto.setDate(albumEntity.getDate());
-            dto.setArtist(artistEntity.getArtist());
 
+            AlbumEntity albumEntity = songEntity.getAlbumEntity();
+            if(albumEntity == null) {
+                dto.setAlbum("(none)");
+                dto.setDate("(none)");
+                dto.setArtist("(none)");
+            } else {
+                dto.setAlbum(albumEntity.getTitle());
+                dto.setDate(albumEntity.getDate());
+
+                ArtistEntity artistEntity = albumEntity.getArtistEntity();
+                if(artistEntity == null)
+                    dto.setArtist("(none)");
+                else
+                    dto.setArtist(artistEntity.getArtist());
+            }
             songsDTO.add(dto);
         }
         Page<SongDTO> page = new PageImpl<SongDTO>(songsDTO, pageable, songsDTO.size());

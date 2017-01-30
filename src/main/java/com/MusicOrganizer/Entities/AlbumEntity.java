@@ -17,6 +17,8 @@ public class AlbumEntity {
         this.date = releaseDate;
     }
 
+    public AlbumEntity() {}
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "album_seq", nullable = false, insertable = false, updatable = true)
@@ -46,17 +48,17 @@ public class AlbumEntity {
         this.date = date;
     }
 
-    @OneToMany(mappedBy = "album", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<SongEntity> songEntities;
-    public Set<SongEntity> getSongEntities() {
-        return songEntities;
-    }
-    public void setSongEntities(Set<SongEntity> songEntities) {
-        this.songEntities = songEntities;
-    }
+//    @OneToMany(mappedBy = "album", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+//    private Set<SongEntity> songEntities;
+//    public Set<SongEntity> getSongEntities() {
+//        return songEntities;
+//    }
+//    public void setSongEntities(Set<SongEntity> songEntities) {
+//        this.songEntities = songEntities;
+//    }
 
     @ManyToOne
-    @JoinColumn(name = "album_artist_artist_seq_fk")
+    @JoinColumn(name = "artist_seq")
     private ArtistEntity artistEntity;
     public ArtistEntity getArtistEntity() {
         return artistEntity;
