@@ -30,12 +30,12 @@ public class ArtistEntity {
         this.artist = artist;
     }
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "artistEntity", cascade = CascadeType.ALL)
-    Set<AlbumEntity> albumEntities;
-    public Set<AlbumEntity> getAlbumEntities() {
-        return albumEntities;
-    }
-    public void setAlbumEntities(Set<AlbumEntity> albumEntities) {
-        this.albumEntities = albumEntities;
-    }
+//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "artistEntity", cascade = CascadeType.ALL)
+//    Set<AlbumEntity> albumEntities;
+//    public Set<AlbumEntity> getAlbumEntities() {
+//        return albumEntities;
+//    }
+//    public void setAlbumEntities(Set<AlbumEntity> albumEntities) {
+//        this.albumEntities = albumEntities;
+//    }
 }

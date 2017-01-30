@@ -57,7 +57,7 @@ public class SongEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "album_seq")
+    @JoinColumn(name = "song_album_album_seq_fk")
     private AlbumEntity albumEntity;
     public AlbumEntity getAlbumEntity() {
         return albumEntity;
@@ -72,8 +72,4 @@ public class SongEntity {
                 " rating: " + rating + " out of 5";
         return ofTheForce;
     }
-
-
-
-
 }

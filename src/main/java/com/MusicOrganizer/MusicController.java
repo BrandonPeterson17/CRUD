@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by user on 1/11/2017.
@@ -48,11 +49,17 @@ public class MusicController {
 
     @ModelAttribute("song")
     public Page<SongDTO> findAllSongs(@PageableDefault(value = 5, page = 0, sort = {"id"}) Pageable pageable, ModelMap modelMap) {
+//        modelMap.addAttribute("", "");
+//        List<AlbumEntity> albums = albumRepository.findAll();
+//        Set<SongEntity> songEntitySet = albums.get(0).getSongEntities();
+
+
 
         List<SongEntity> songs = songRepository.findAll();
         List<SongDTO> songsDTO = new ArrayList<>();
         for(SongEntity songEntity: songs) {
             SongDTO dto = new SongDTO();
+
 
             AlbumEntity albumEntity = songEntity.getAlbumEntity();
             ArtistEntity artistEntity = albumEntity.getArtistEntity();

@@ -46,7 +46,7 @@ public class AlbumEntity {
         this.date = date;
     }
 
-    @OneToMany(mappedBy = "albumEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "album", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<SongEntity> songEntities;
     public Set<SongEntity> getSongEntities() {
         return songEntities;
@@ -56,7 +56,7 @@ public class AlbumEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "artist_seq")
+    @JoinColumn(name = "album_artist_artist_seq_fk")
     private ArtistEntity artistEntity;
     public ArtistEntity getArtistEntity() {
         return artistEntity;
