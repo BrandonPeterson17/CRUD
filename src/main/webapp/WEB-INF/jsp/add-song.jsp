@@ -22,7 +22,7 @@
         <tr>
             <td>Song:</td>
             <td><form:input path="title" /></td>
-            <td rowspan="3"><input id="add_btn" type="submit" value="Add Album" /></td>
+            <td rowspan="3"><input id="add_btn" type="submit" value="Add Song" /></td>
             <td rowspan="3"><a id="home_btn" href="/"><input type="button" value="Home"/></a></td>
         </tr>
         <tr>
