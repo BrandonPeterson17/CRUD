@@ -234,13 +234,43 @@ public class MusicController {
         return "redirect:/";
     }
 
+    @RequestMapping(value = "/addalbum")
+    public String renderAddAlbum(ModelMap modelMap) {
+        Song songForm = new Song();
+
+        modelMap.put("artists", getArtists());
+        modelMap.put("songForm", songForm);
+        return "add-album";
+    }
+
+    private List<String> getArtists() {
+        List<ArtistEntity> artistEntities = artistRepository.findAll();
+        List<String> artists = new ArrayList<>();
+        for(ArtistEntity artistEntity: artistEntities)
+            artists.add(artistEntity.getArtist());
+        return artists;
+    }
+
     @RequestMapping(value = "/add/album", method = RequestMethod.POST)
     public String addAlbum(@RequestParam("album") String album, @RequestParam("date") String date,
                            @RequestParam("artist") String artist, @ModelAttribute("songForm") Song song,
                            ModelMap modelMap) {
         ErrorInput errorInput = new ErrorInput(songRepository, albumRepository, artistRepository);
-        List<String> srrmsg = errorInput.checkAlbum(album, artist);
-        return "home";
+        List<String> errmsg = errorInput.checkAlbum(album, artist);
+        if(errmsg.size() > 0) {
+            modelMap.put("inputErrors", errmsg);
+            song.setAlbum(album);
+            song.setArtist(artist);
+            song.setDate(date);
+            modelMap.put("artists", getArtists());
+            modelMap.put("songForm", song);
+            return "add-album";
+        }
+        AlbumEntity albumEntity = new AlbumEntity(album, date);
+        ArtistEntity artistEntity = artistRepository.findByArtistIgnoreCase(artist).get(0);
+        albumEntity.setArtistEntity(artistEntity);
+        albumRepository.save(albumEntity);
+        return "redirect:/";
     }
 
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.POST)

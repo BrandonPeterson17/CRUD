@@ -62,7 +62,7 @@
             <td colspan="6"><a href="/search/page/?page=0&title="><button id="search">Search</button></a></td>
         </tr>
     </table>
-
+    <a href="/addalbum"><button id="add_album">Add Album</button></a>
 </body>
 </html>
 

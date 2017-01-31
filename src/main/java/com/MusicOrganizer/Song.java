@@ -1,5 +1,7 @@
 package com.MusicOrganizer;
 
+import java.util.List;
+
 /**
  * Created by user on 1/19/2017.
  */
@@ -10,6 +12,9 @@ public class Song {
     private String artist;
     private String genre;
     private String rating;
+    private String date;
+    private String album;
+    private List<String> artists;
 
     public void setId(String id) {
         this.id = id;
@@ -49,5 +54,29 @@ public class Song {
 
     public void setRating(String rating) {
         this.rating = rating;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getAlbum() {
+        return album;
+    }
+
+    public void setAlbum(String album) {
+        this.album = album;
+    }
+
+    public List<String> getArtists() {
+        return artists;
+    }
+
+    public void setArtists(List<String> artists) {
+        this.artists = artists;
     }
 }
