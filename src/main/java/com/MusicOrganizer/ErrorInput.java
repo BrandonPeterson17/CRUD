@@ -134,7 +134,7 @@ public class ErrorInput {
         return emessages;
     }
 
-    public ArrayList<String> checkSong(String song, String album, String artist) {
+    public ArrayList<String> checkSong(String song, String rating, String album, String artist) {
         ArrayList<String> emessages = new ArrayList<>();
         List<SongEntity> songs = songRepo.findAll();
         for(SongEntity songEntity: songs){
@@ -143,6 +143,14 @@ public class ErrorInput {
             boolean artistDupl = songEntity.getAlbumEntity().getArtistEntity().getArtist().toLowerCase().equals(artist.toLowerCase());
             if(songDupl && albumDupl && artistDupl)
                 emessages.add("Song already exists in " + album + " by " + artist);
+        }
+        int rat;
+        try {
+            rat = Integer.parseInt(rating);
+            if(rat > 5 || rat < 1)
+                emessages.add("Rating must be within range 1-5");
+        } catch (NumberFormatException ex) {
+            emessages.add("Rating must be an integer ranging from 1 to 5");
         }
         return emessages;
     }

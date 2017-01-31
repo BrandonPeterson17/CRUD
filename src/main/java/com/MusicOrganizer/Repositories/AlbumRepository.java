@@ -18,6 +18,10 @@ public interface AlbumRepository extends JpaRepository<AlbumEntity, Long> {
 
     Page<AlbumEntity> findAll(Pageable pageable);
 
+    AlbumEntity findByTitleIgnoreCase(String title);
+
+    AlbumEntity findById(long id);
+
 //    @Query("SELECT a FROM AlbumEntity a LEFT JOIN FETCH a.songEntities WHERE a.songEntities.id=:songId")
 //    List<AlbumEntity> findById(@Param("songId") String aongId);
 

@@ -251,6 +251,14 @@ public class MusicController {
         return artists;
     }
 
+    private List<AlbumEntity> getAlbums() {
+        List<AlbumEntity> albumEntities = albumRepository.findAll();
+        List<String> albums = new ArrayList<>();
+        for(AlbumEntity albumEntity: albumEntities)
+            albums.add(albumEntity.getTitle() + " (" + albumEntity.getArtistEntity().getArtist() + ")");
+        return albumEntities;
+    }
+
     @RequestMapping(value = "/add/album", method = RequestMethod.POST)
     public String addAlbum(@RequestParam("album") String album, @RequestParam("date") String date,
                            @RequestParam("artist") String artist, @ModelAttribute("songForm") Song song,
@@ -270,6 +278,38 @@ public class MusicController {
         ArtistEntity artistEntity = artistRepository.findByArtistIgnoreCase(artist).get(0);
         albumEntity.setArtistEntity(artistEntity);
         albumRepository.save(albumEntity);
+        return "redirect:/";
+    }
+
+    @RequestMapping(value = "addsong")
+    public String renderAddSong(ModelMap modelMap) {
+        Song songForm = new Song();
+        modelMap.put("albums", getAlbums());
+        modelMap.put("songForm", songForm);
+        return "add-song";
+    }
+
+    @RequestMapping(value = "/add/song")
+    public String addSong(@RequestParam("title") String songTitle, @RequestParam("genre") String genre,
+                          @RequestParam("rating") String rating, @RequestParam("id") String id,
+                          @ModelAttribute("songForm") Song song, ModelMap modelMap) {
+        ErrorInput errorInput = new ErrorInput(songRepository, albumRepository, artistRepository);
+        System.out.println(id);
+        AlbumEntity albumEntity = albumRepository.findById(Integer.parseInt(id));
+        List<String> errmsg = errorInput.checkSong(songTitle, rating, albumEntity.getTitle(), albumEntity.getArtistEntity().getArtist());
+        if(errmsg.size() > 0) {
+            modelMap.put("inputErrors", errmsg);
+            song.setId(id);
+            song.setTitle(songTitle);
+            song.setRating(rating);
+            song.setGenre(genre);
+            modelMap.put("albums", getAlbums());
+            modelMap.put("songForm", song);
+            return "add-song";
+        }
+        SongEntity songEntity = new SongEntity(songTitle, genre, Integer.parseInt(rating));
+        songEntity.setAlbumEntity(albumEntity);
+        songRepository.save(songEntity);
         return "redirect:/";
     }
 

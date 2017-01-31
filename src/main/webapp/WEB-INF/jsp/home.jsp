@@ -63,6 +63,7 @@
         </tr>
     </table>
     <a href="/addalbum"><button id="add_album">Add Album</button></a>
+    <a href="/addsong"><button id="add_song">Add Song</button></a>
 </body>
 </html>
 

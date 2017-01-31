@@ -1,5 +1,7 @@
 package com.MusicOrganizer;
 
+import com.MusicOrganizer.Entities.AlbumEntity;
+
 import java.util.List;
 
 /**
@@ -14,7 +16,7 @@ public class Song {
     private String rating;
     private String date;
     private String album;
-    private List<String> artists;
+    private AlbumEntity albumEntity;
 
     public void setId(String id) {
         this.id = id;
@@ -70,13 +72,5 @@ public class Song {
 
     public void setAlbum(String album) {
         this.album = album;
-    }
-
-    public List<String> getArtists() {
-        return artists;
-    }
-
-    public void setArtists(List<String> artists) {
-        this.artists = artists;
     }
 }
