@@ -1,7 +1,12 @@
 package com.MusicOrganizer;
 
+import com.MusicOrganizer.Entities.AlbumEntity;
+import com.MusicOrganizer.Entities.ArtistEntity;
 import com.MusicOrganizer.Entities.SongEntity;
+import com.MusicOrganizer.Repositories.AlbumRepository;
+import com.MusicOrganizer.Repositories.ArtistRepository;
 import com.MusicOrganizer.Repositories.SongRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,18 +20,20 @@ public class ErrorInput {
     private String rating;
     private List<String> errorMessages;
     private boolean hasErrors;
-    private SongRepository songRepository;
     private int id;
+    private SongRepository songRepo;
+    private AlbumRepository albumRepo;
+    private ArtistRepository artistRepo;
 
     public static final String CONSOLE = "console";
     public static final String PRINT = "print";
 
     //pass in song entity to test
-//    public ErrorInput(SongEntity se, SongRepository songRepository, int id) {
+//    public ErrorInput(SongEntity se, SongRepository songRepo, int id) {
 //        songEntity = se;
 //        rating = Integer.toString(se.getRating());
 //        errorMessages = new ArrayList<>();
-//        this.songRepository = songRepository;
+//        this.songRepo = songRepo;
 //        this.id = id;
 //        updateErrors();
 //    }
@@ -37,9 +44,15 @@ public class ErrorInput {
         songEntity = new SongEntity(title, genre, 0);
         this.rating = rating;
         errorMessages = new ArrayList<>();
-        this.songRepository = songRepository;
+        this.songRepo = songRepository;
         this.id = id;
         updateErrors();
+    }
+
+    public ErrorInput(SongRepository songRepo, AlbumRepository albumRepo, ArtistRepository artistRepo) {
+        this.songRepo = songRepo;
+        this.albumRepo = albumRepo;
+        this.artistRepo = artistRepo;
     }
 
     public SongEntity getSongEntity() {
@@ -95,8 +108,42 @@ public class ErrorInput {
 
     //searches repository for song with same title
     private boolean existsDuplicateTitle() {
-        List<SongEntity> allSongs = songRepository.findByTitleIgnoreCase(songEntity.getTitle());
+        List<SongEntity> allSongs = songRepo.findByTitleIgnoreCase(songEntity.getTitle());
         boolean hasDuplicate = allSongs.size() > 0;
         return hasDuplicate;
+    }
+
+    public ArrayList<String> checkArtist(String artist) {
+        ArrayList<String> emessages = new ArrayList<>();
+        List<ArtistEntity> artists = artistRepo.findAll();
+        for(ArtistEntity artistEntity: artists)
+            if(artistEntity.getArtist().toLowerCase().equals(artist.toLowerCase()))
+                emessages.add("Artist already exists");
+        return emessages;
+    }
+
+    public ArrayList<String> checkAlbum(String album, String artist) {
+        ArrayList<String> emessages = new ArrayList<>();
+        List<AlbumEntity> albums = albumRepo.findAll();
+        for(AlbumEntity albumEntity: albums) {
+            boolean albumDupl = albumEntity.getTitle().toLowerCase().equals(album.toLowerCase());
+            boolean artistDupl = albumEntity.getArtistEntity().getArtist().toLowerCase().equals(artist.toLowerCase());
+            if (albumDupl && artistDupl)
+                emessages.add("Album already exists by " + artist);
+        }
+        return emessages;
+    }
+
+    public ArrayList<String> checkSong(String song, String album, String artist) {
+        ArrayList<String> emessages = new ArrayList<>();
+        List<SongEntity> songs = songRepo.findAll();
+        for(SongEntity songEntity: songs){
+            boolean songDupl = songEntity.getTitle().toLowerCase().equals(song.toLowerCase());
+            boolean albumDupl = songEntity.getAlbumEntity().getTitle().toLowerCase().equals(album.toLowerCase());
+            boolean artistDupl = songEntity.getAlbumEntity().getArtistEntity().getArtist().toLowerCase().equals(artist.toLowerCase());
+            if(songDupl && albumDupl && artistDupl)
+                emessages.add("Song already exists in " + album + " by " + artist);
+        }
+        return emessages;
     }
 }

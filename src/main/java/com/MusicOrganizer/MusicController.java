@@ -5,6 +5,7 @@ import com.MusicOrganizer.Entities.ArtistEntity;
 import com.MusicOrganizer.Entities.SongDTO;
 import com.MusicOrganizer.Entities.SongEntity;
 import com.MusicOrganizer.Repositories.AlbumRepository;
+import com.MusicOrganizer.Repositories.ArtistRepository;
 import com.MusicOrganizer.Repositories.SongRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -28,6 +29,8 @@ public class MusicController {
     SongRepository songRepository;
     @Autowired
     AlbumRepository albumRepository;
+    @Autowired
+    ArtistRepository artistRepository;
 
     @RequestMapping(value = "/")
     public String home(ModelMap song) {
@@ -185,7 +188,7 @@ public class MusicController {
     public String create(ModelMap modelMap) {
         Song songForm = new Song();
         modelMap.put("songForm", songForm);
-        return "create";
+        return "add-artist";
     }
 
     /*@RequestMapping(value = "/search")
@@ -216,24 +219,28 @@ public class MusicController {
 //    }
 
 
-    @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public String add(@RequestParam("title") String title, @RequestParam("artist") String artist,
-                      /*@RequestParam("album") String album,*/ @RequestParam("genre") String genre,
-                      @RequestParam("rating") String rating, @ModelAttribute("songForm") Song song,
+    @RequestMapping(value = "/add/artist", method = RequestMethod.POST)
+    public String add(@RequestParam("artist") String artist, @ModelAttribute("songForm") Song song,
                       ModelMap modelMap) {
-        ErrorInput errorInput = new ErrorInput(title, artist, genre, rating, songRepository, -1);
-        if (errorInput.hasErrors()) {
-            modelMap.put("inputErrors", errorInput.getErrorMessages());
-            song.setTitle(title);
+        ErrorInput errorInput = new ErrorInput(songRepository, albumRepository, artistRepository);
+        List<String> errmsg = errorInput.checkArtist(artist);
+        if (errmsg.size() > 0) {
+            modelMap.put("inputErrors", errmsg);
             song.setArtist(artist);
-            song.setGenre(genre);
-            song.setRating(rating);
-            return "create";
-        } else {
-            songRepository.save(errorInput.getSongEntity());
-            modelMap.put("inputErrors", null);
+            return "add-artist";
         }
+        artistRepository.save(new ArtistEntity(artist));
+        modelMap.put("inputErrors", null);
         return "redirect:/";
+    }
+
+    @RequestMapping(value = "/add/album", method = RequestMethod.POST)
+    public String addAlbum(@RequestParam("album") String album, @RequestParam("date") String date,
+                           @RequestParam("artist") String artist, @ModelAttribute("songForm") Song song,
+                           ModelMap modelMap) {
+        ErrorInput errorInput = new ErrorInput(songRepository, albumRepository, artistRepository);
+        List<String> srrmsg = errorInput.checkAlbum(album, artist);
+        return "home";
     }
 
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.POST)

@@ -18,30 +18,16 @@
 <c:forEach items="${inputErrors}" var="errormsg">
     <p class="errormsg">Error : <c:out value="${errormsg}"/></p>
 </c:forEach>
-<table>
-    <form:form id="add" method="post" action="/add" commandName="songForm">
+    <form:form id="add" method="post" action="/add/artist" commandName="songForm">
         <table>
-            <tr>
-                <th>Title:</th>
-                <th><form:input path="title"/></th>
-                <th rowspan="2"><input id="add_btn" type="submit" value="Add"/></th>
-            </tr>
             <tr>
                 <th>Artist:</th>
                 <th><form:input path="artist" /></th>
-            </tr>
-            <tr>
-                <th>Genre:</th>
-                <th><form:input path="genre" /></th>
-                <th rowspan="2"><a id="home_button" href="/"><input type="button" value="Home"/></a></th>
-            </tr>
-            <tr>
-                <th>Rating:</th>
-                <th><form:input path="rating" /></th>
+                <th><input id="add_btn" type="submit" value="Add Artist"/></th>
+                <th><a id="home_button" href="/"><input type="button" value="Home"/></a></th>
             </tr>
         </table>
     </form:form>
-</table>
 </body>
 </html>
 
