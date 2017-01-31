@@ -18,15 +18,17 @@
     <table cellpadding="5px">
         <tr>
             <td rowspan="8" class="nav_back" ><a class="nav" href="/home/?page=${(param.page > 0) ? param.page - 1 : 0}">&lt;</a></td>
-            <td colspan="6" align="center">SONGS</td>
+            <td colspan="8" align="center">SONGS</td>
             <td colspan="5" align="center">EDIT</td>
             <td align="center">Email</td>
             <td rowspan="8" class="nav_back" ><a class="nav" href="/home/?page=${(param.page <= song.getTotalPages() - 2) ? param.page + 1 : param.page}">&gt;</a></td>
         </tr>
-        <tr id="">
+        <tr>
             <td>Song Num</td>
             <td>Title</td>
             <td>Artist</td>
+            <td>Album</td>
+            <td>Release Date</td>
             <td>Genre</td>
             <td>Rating</td>
             <td>Remove</td>
@@ -58,12 +60,14 @@
         </tr>
         </c:forEach>
         <tr>
-            <td colspan="6"><a href="/create"><button id="add">+</button></a></td>
-            <td colspan="6"><a href="/search/page/?page=0&title="><button id="search">Search</button></a></td>
+            <td colspan="3"><a href="/addsong"><button class="add">Add Song</button></a></td>
+            <td colspan="3"><a href="/addalbum"><button class="add">Add Album</button></a></td>
+            <td colspan="3"><a href="/addartist"><button class="add">Add Artist</button></a></td>
+            <td colspan="5"><a href="/search/page/?page=0&title="><button id="search">Search</button></a></td>
         </tr>
     </table>
-    <a href="/addalbum"><button id="add_album">Add Album</button></a>
-    <a href="/addsong"><button id="add_song">Add Song</button></a>
+
+
 </body>
 </html>
 
@@ -106,16 +110,15 @@
         border: 2px solid black;
     }
 
-    #add, #search {
+    .add, #search {
         height: 24px;
-        line-height: 0;
         width: 100%;
         font-family: "Agency FB", sans-serif;
         font-weight: bold;
     }
 
-    #add {
-        font-size: 2em;
+    .add {
+        font-size: 1.2em;
     }
 
     #search {

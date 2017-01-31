@@ -51,7 +51,8 @@ public class MusicController {
     }
 
     @ModelAttribute("song")
-    public Page<SongDTO> findAllSongs(@PageableDefault(value = 5, page = 0, sort = {"id"}) Pageable pageable, ModelMap modelMap) {
+    public Page<SongDTO> findAllSongs(@PageableDefault(value = 5, page = 0, sort = {"id"}) Pageable pageable, ModelMap modelMap,
+                                      @RequestParam("page")String pageNum) {
 //        String s = "s";
 //        List<AlbumEntity> albums = albumRepository.findAll();
 //        Set<SongEntity> songEntitySet = albums.get(0).getSongEntities();
@@ -65,6 +66,7 @@ public class MusicController {
             dto.setId(songEntity.getId());
             dto.setTitle(songEntity.getTitle());
             dto.setGenre(songEntity.getGenre());
+            dto.setRating(songEntity.getRating());
 
             AlbumEntity albumEntity = songEntity.getAlbumEntity();
             if(albumEntity == null) {
@@ -83,7 +85,8 @@ public class MusicController {
             }
             songsDTO.add(dto);
         }
-        Page<SongDTO> page = new PageImpl<SongDTO>(songsDTO, pageable, songsDTO.size());
+        AbstractPageRequest pageRequest = new PageRequest(Integer.parseInt(pageNum), 5, new Sort(Sort.Direction.ASC, "id"));
+        Page<SongDTO> page = new PageImpl<SongDTO>(songsDTO, pageRequest, songsDTO.size());
         return page;
 
 //        modelMap.put("AllSongs", songRepository.findAll(new Sort(Sort.Direction.ASC, "title")));
@@ -184,7 +187,7 @@ public class MusicController {
 
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    @RequestMapping(value = "/create", method = RequestMethod.GET)
+    @RequestMapping(value = "/addartist")
     public String create(ModelMap modelMap) {
         Song songForm = new Song();
         modelMap.put("songForm", songForm);
@@ -308,6 +311,7 @@ public class MusicController {
             return "add-song";
         }
         SongEntity songEntity = new SongEntity(songTitle, genre, Integer.parseInt(rating));
+        System.out.println("rating = " + rating + " = " + Integer.parseInt(rating));
         songEntity.setAlbumEntity(albumEntity);
         songRepository.save(songEntity);
         return "redirect:/";
@@ -348,6 +352,4 @@ public class MusicController {
         }
         return "redirect:/home/?page=" + page;
     }
-
-
 }
