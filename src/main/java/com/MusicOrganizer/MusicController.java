@@ -47,6 +47,7 @@ public class MusicController {
 
 //        Page<SongEntity> allTheSongs = songRepository.findAll(pageable);
 //        mo.put("song", allTheSongs);
+        mo.put("pageNum", 0);
         return "home";
     }
 
@@ -85,8 +86,12 @@ public class MusicController {
             }
             songsDTO.add(dto);
         }
-        AbstractPageRequest pageRequest = new PageRequest(Integer.parseInt(pageNum), 5, new Sort(Sort.Direction.ASC, "id"));
-        Page<SongDTO> page = new PageImpl<SongDTO>(songsDTO, pageRequest, songsDTO.size());
+        if(modelMap.get("pageNum") == null)
+        System.out.println("page num = " + pageNum);
+        Pageable pageRequest = new PageRequest(Integer.parseInt(pageNum), 5, new Sort(Sort.Direction.ASC, "id"));
+        Page<SongDTO> page = new PageImpl<>(songsDTO, pageRequest, songsDTO.size());
+        modelMap.putIfAbsent("totalPages", page.getTotalPages());
+        System.out.println("Total pages = " + page);
         return page;
 
 //        modelMap.put("AllSongs", songRepository.findAll(new Sort(Sort.Direction.ASC, "title")));

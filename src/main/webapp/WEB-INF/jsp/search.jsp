@@ -32,7 +32,8 @@
             <tr>
                 <td>${search.id}</td>
                 <td>${search.title}</td>
-                <td>${search.artist}</td>
+                <td>${search.getArtistEntity().getArtist()}</td>
+                <td>${search.getAlbumEntity().getTitle()}</td>
                 <td>${search.genre}</td>
                 <td>${search.rating}</td>
             </tr>

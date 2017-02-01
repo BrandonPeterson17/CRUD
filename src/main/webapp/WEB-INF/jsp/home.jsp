@@ -21,7 +21,7 @@
             <td colspan="8" align="center">SONGS</td>
             <td colspan="5" align="center">EDIT</td>
             <td align="center">Email</td>
-            <td rowspan="8" class="nav_back" ><a class="nav" href="/home/?page=${(param.page <= song.getTotalPages() - 2) ? param.page + 1 : param.page}">&gt;</a></td>
+            <td rowspan="8" class="nav_back" ><a class="nav" href="/home/?page=${(param.page < totalPages - param.page - 1) ? param.page + 1 : param.page}">&gt;</a></td>
         </tr>
         <tr>
             <td>Song Num</td>
@@ -39,24 +39,24 @@
             <td>Edit</td>
             <td>Select</td>
         </tr>
-        <c:forEach items = "${song.content}" var = "song">
+        <c:forEach items = "${song.content}" var = "songDTO" begin="${param.page * 5}" end="${(param.page * 5) + 4}">
         <tr>
-            <td>${song.id}</td>
-            <td>${song.title}</td>
-            <td>${song.artist}</td>
-            <td>${song.album}</td>
-            <td>${song.date}</td>
-            <td>${song.genre}</td>
-            <td>${song.rating}</td>
-            <form class="delete" method="post" action="/delete/${song.id}?page=${param.page}"><td><input class="delete_btn" type="submit" value="Delete" /></td></form>
-            <form class="edit" method="post" action="/edit/${song.id}?page=${param.page}">
+            <td>${songDTO.id}</td>
+            <td>${songDTO.title}</td>
+            <td>${songDTO.artist}</td>
+            <td>${songDTO.album}</td>
+            <td>${songDTO.date}</td>
+            <td>${songDTO.genre}</td>
+            <td>${songDTO.rating}</td>
+            <form class="delete" method="post" action="/delete/${songDTO.id}?page=${param.page}"><td><input class="delete_btn" type="submit" value="Delete" /></td></form>
+            <form class="edit" method="post" action="/edit/${songDTO.id}?page=${param.page}">
                 <td><input class="edit_title" type="text" name="title" /></td>
                 <td><input class="edit_artist" type="text" name="artist" /></td>
                 <td><input class="edit_genre" type="text" name="genre" /></td>
                 <td><input class="edit_rating" type="text" name="rating" /></td>
                 <td><input class="edit_submit" type="submit" value="Edit" /></td>
             </form>
-            <form class="email" method="post" action="/email/${song.id}"><td><input class="email_btn" type="submit" value="Email"/></td></form>
+            <form class="email" method="post" action="/email/${songDTO.id}"><td><input class="email_btn" type="submit" value="Email"/></td></form>
         </tr>
         </c:forEach>
         <tr>

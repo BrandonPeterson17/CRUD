@@ -66,6 +66,9 @@ public class SongEntity {
         this.albumEntity = albumEntity;
     }
 
+    public ArtistEntity getArtistEntity() {
+        return albumEntity.getArtistEntity();
+    }
 
     public String getString() {
         String ofTheForce = title + " - " + genre +
