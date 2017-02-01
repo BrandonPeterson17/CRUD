@@ -6,12 +6,16 @@ package com.MusicOrganizer.Entities;
 public class SongDTO {
 
     private long id;
+    private String albumId;
+    private String artistId;
     private String title;
     private String artist;
     private String album;
     private String genre;
     private String date;
     private int rating;
+    private String ratSt;
+    private AlbumEntity albumEntity;
 
     public SongDTO() {}
 
@@ -23,6 +27,22 @@ public class SongDTO {
         this.id = id;
     }
 
+    public String getAlbumId() {
+        return albumId;
+    }
+
+    public void setAlbumId(String albumId) {
+        this.albumId = albumId;
+    }
+    
+    public String getArtistId() {
+        return artistId;
+    }
+
+    public void setArtistId(String artistId) {
+        this.artistId = artistId;
+    }
+    
     public String getTitle() {
         return title;
     }
@@ -69,5 +89,21 @@ public class SongDTO {
 
     public void setRating(int rating) {
         this.rating = rating;
+    }
+
+    public String getRatSt() {
+        return ratSt;
+    }
+
+    public void setRatSt(String ratSt) {
+        this.ratSt = ratSt;
+    }
+
+    public AlbumEntity getAlbumEntity() {
+        return albumEntity;
+    }
+
+    public void setAlbumEntity(AlbumEntity albumEntity) {
+        this.albumEntity = albumEntity;
     }
 }

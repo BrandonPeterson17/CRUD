@@ -1,4 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <html>
 <head>
     <title>Music Organizer Plus</title>
@@ -19,7 +20,7 @@
         <tr>
             <td rowspan="8" class="nav_back" ><a class="nav" href="/home/?page=${(param.page > 0) ? param.page - 1 : 0}">&lt;</a></td>
             <td colspan="8" align="center">SONGS</td>
-            <td colspan="5" align="center">EDIT</td>
+            <td colspan="8" align="center">EDIT</td>
             <td align="center">Email</td>
             <td rowspan="8" class="nav_back" ><a class="nav" href="/home/?page=${(param.page < totalPages - param.page - 1) ? param.page + 1 : param.page}">&gt;</a></td>
         </tr>
@@ -34,6 +35,8 @@
             <td>Remove</td>
             <td>Edit Title</td>
             <td>Edit Artist</td>
+            <td colspan="2">Edit Album</td>
+            <td>Edit Date</td>
             <td>Edit Genre</td>
             <td>Edit Rating</td>
             <td>Edit</td>
@@ -41,21 +44,37 @@
         </tr>
         <c:forEach items = "${song.content}" var = "songDTO" begin="${param.page * 5}" end="${(param.page * 5) + 4}">
         <tr>
+
+            <form:form class="edit" method="post" action="/edit/${songDTO.id}?page=${param.page}" commandName="editForm">
             <td>${songDTO.id}</td>
-            <td>${songDTO.title}</td>
-            <td>${songDTO.artist}</td>
-            <td>${songDTO.album}</td>
-            <td>${songDTO.date}</td>
-            <td>${songDTO.genre}</td>
-            <td>${songDTO.rating}</td>
+            <td><form:input cssclass="edit_title" path="title" value="${songDTO.title}" /></td>
+
+
+
+            <td><form:select cssClass="edit_album" path="albumId" > <!--album id, not song id-->
+                <c:forEach items="${songDTO.albumEntity.getArtistEntity().getAlbumEntities()}" var="album">
+                    <c:if test="${album.getId() == songDTO.albumEntity.getId()}"> <!--finds only matching album to put first-->
+                        <form:option label="${album.getTitle()} (${album.getArtistEntity().getArtist()})" value="${album.getId()}" />
+                    </c:if>
+                </c:forEach>
+                <c:forEach items="${songDTO.albumEntity.getArtistEntity().getAlbumEntities()}" var="album">
+                    <c:if test="${album.getId() != songDTO.albumEntity.getId()}"> <!--gets the rest, ignorinng first to avoid duplicates-->
+                        <form:option label="${album.getTitle()} (${album.getArtistEntity().getArtist()})" value="${album.getId()}" />
+                    </c:if>
+                </c:forEach>
+            </form:select></td>
+
+
+
+
+            <td><form:input cssClass="edit_date" path="date" value="${songDTO.date}"/></td>
+            <td><form:input cssClass="edit_genre" path="genre" value="${songDTO.genre}"/></td>
+            <td><form:input cssClass="edit_rating" path="rating" value="${songDTO.rating}"/></td>
+
+
+                <td><form:button class="edit_submit" type="submit" >Save</form:button></td>
+            </form:form>
             <form class="delete" method="post" action="/delete/${songDTO.id}?page=${param.page}"><td><input class="delete_btn" type="submit" value="Delete" /></td></form>
-            <form class="edit" method="post" action="/edit/${songDTO.id}?page=${param.page}">
-                <td><input class="edit_title" type="text" name="title" /></td>
-                <td><input class="edit_artist" type="text" name="artist" /></td>
-                <td><input class="edit_genre" type="text" name="genre" /></td>
-                <td><input class="edit_rating" type="text" name="rating" /></td>
-                <td><input class="edit_submit" type="submit" value="Edit" /></td>
-            </form>
             <form class="email" method="post" action="/email/${songDTO.id}"><td><input class="email_btn" type="submit" value="Email"/></td></form>
         </tr>
         </c:forEach>
@@ -63,11 +82,9 @@
             <td colspan="3"><a href="/addsong"><button class="add">Add Song</button></a></td>
             <td colspan="3"><a href="/addalbum"><button class="add">Add Album</button></a></td>
             <td colspan="3"><a href="/addartist"><button class="add">Add Artist</button></a></td>
-            <td colspan="5"><a href="/search/page/?page=0&title="><button id="search">Search</button></a></td>
+            <td colspan="8"><a href="/search/page/?page=0&title="><button id="search">Search</button></a></td>
         </tr>
     </table>
-
-
 </body>
 </html>
 

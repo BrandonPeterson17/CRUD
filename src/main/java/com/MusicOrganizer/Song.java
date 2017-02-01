@@ -16,6 +16,8 @@ public class Song {
     private String rating;
     private String date;
     private String album;
+    private String listAlbum;
+    private String albumId;
     private AlbumEntity albumEntity;
 
     public void setId(String id) {
@@ -72,5 +74,21 @@ public class Song {
 
     public void setAlbum(String album) {
         this.album = album;
+    }
+
+    public String getAlbumId() {
+        return albumId;
+    }
+
+    public void setAlbumId(String albumId) {
+        this.albumId = albumId;
+    }
+
+    public String getListAlbum() {
+        return listAlbum;
+    }
+
+    public void setListAlbum(String listAlbum) {
+        this.listAlbum = listAlbum;
     }
 }

@@ -1,6 +1,7 @@
 package com.MusicOrganizer.Entities;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -36,12 +37,12 @@ public class ArtistEntity {
         this.artist = artist;
     }
 
-//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "artistEntity", cascade = CascadeType.ALL)
-//    Set<AlbumEntity> albumEntities;
-//    public Set<AlbumEntity> getAlbumEntities() {
-//        return albumEntities;
-//    }
-//    public void setAlbumEntities(Set<AlbumEntity> albumEntities) {
-//        this.albumEntities = albumEntities;
-//    }
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "artistEntity", cascade = CascadeType.ALL)
+    List<AlbumEntity> albumEntities;
+    public List<AlbumEntity> getAlbumEntities() {
+        return albumEntities;
+    }
+    public void setAlbumEntities(List<AlbumEntity> albumEntities) {
+        this.albumEntities = albumEntities;
+    }
 }

@@ -3,6 +3,7 @@ package com.MusicOrganizer.Entities;
 import javax.persistence.*;
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -48,14 +49,14 @@ public class AlbumEntity {
         this.date = date;
     }
 
-//    @OneToMany(mappedBy = "album", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-//    private Set<SongEntity> songEntities;
-//    public Set<SongEntity> getSongEntities() {
-//        return songEntities;
-//    }
-//    public void setSongEntities(Set<SongEntity> songEntities) {
-//        this.songEntities = songEntities;
-//    }
+    @OneToMany(mappedBy = "albumEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<SongEntity> songEntities;
+    public List<SongEntity> getSongEntities() {
+        return songEntities;
+    }
+    public void setSongEntities(List<SongEntity> songEntities) {
+        this.songEntities = songEntities;
+    }
 
     @ManyToOne
     @JoinColumn(name = "artist_seq")

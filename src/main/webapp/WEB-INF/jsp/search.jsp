@@ -18,13 +18,14 @@
         <tr><form:form method="post" action="/search/?page=0" commandName="songForm">
             <td>Search Here:</td>
             <td><form:input id="title_entry" path="title"/></td>
-            <td colspan="2"><input class="btn" type="submit" value="Search"/></td></form:form>
-            <form method="post" action="/"><td><button class="btn"/>Home</td></form>
+            <td colspan="3"><input class="btn" type="submit" value="Search"/></td></form:form>
+            <form method="post" action="/home/?page=0"><td><button class="btn"/>Home</td></form>
         </tr>
         <tr>
             <td>ID</td>
             <td>Title</td>
             <td>Artist</td>
+            <td>Album</td>
             <td>Genre</td>
             <td>Rating</td>
         </tr>
@@ -40,7 +41,7 @@
         </c:forEach>
         <tr>
             <td class="nav_back"><form:form method="post" action="/search/page/?page=${(param.page > 0) ? param.page - 1 : 0}&title=${songForm.getTitle()}" commandName="songForm"><form:button text="<<<" class="nav">&lt;&lt;&lt;</form:button></form:form></td>
-            <td colspan="3">Page ${param.page + 1}/${searchSong.getTotalPages()}</td>
+            <td colspan="4">Page ${param.page + 1}/${searchSong.getTotalPages()}</td>
             <td class="nav_back"><form:form method="post" action="/search/page/?page=${param.page <= searchSong.getTotalPages() - 2 ? param.page + 1 : param.page}&title=${songForm.getTitle()}" commandName="songForm"><form:button value=">>>" class="nav">&gt;&gt;&gt;</form:button></form:form></td>
         </tr>
     </table>
