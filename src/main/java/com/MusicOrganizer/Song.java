@@ -18,6 +18,7 @@ public class Song {
     private String album;
     private String listAlbum;
     private String albumId;
+    private String artistId;
     private AlbumEntity albumEntity;
 
     public void setId(String id) {
@@ -82,6 +83,14 @@ public class Song {
 
     public void setAlbumId(String albumId) {
         this.albumId = albumId;
+    }
+
+    public String getArtistId() {
+        return artistId;
+    }
+
+    public void setArtistId(String artistId) {
+        this.artistId = artistId;
     }
 
     public String getListAlbum() {

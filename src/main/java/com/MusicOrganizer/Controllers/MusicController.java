@@ -1,12 +1,15 @@
-package com.MusicOrganizer;
+package com.MusicOrganizer.Controllers;
 
 import com.MusicOrganizer.Entities.AlbumEntity;
 import com.MusicOrganizer.Entities.ArtistEntity;
 import com.MusicOrganizer.Entities.SongDTO;
 import com.MusicOrganizer.Entities.SongEntity;
+import com.MusicOrganizer.ErrorInput;
+import com.MusicOrganizer.MusicMailSender;
 import com.MusicOrganizer.Repositories.AlbumRepository;
 import com.MusicOrganizer.Repositories.ArtistRepository;
 import com.MusicOrganizer.Repositories.SongRepository;
+import com.MusicOrganizer.Song;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.web.PageableDefault;
@@ -57,7 +60,7 @@ public class MusicController {
 
     @ModelAttribute("song")
     public Page<SongDTO> findAllSongs(@PageableDefault(value = 5, page = 0, sort = {"id"}) Pageable pageable, ModelMap modelMap,
-                                      @RequestParam(name = "page", required = false)String pageNum) {
+                                      @RequestParam(name = "page", required = false, defaultValue = "0")String pageNum) {
 //        String s = "s";
 //        List<AlbumEntity> albums = albumRepository.findAll();
 //        Set<SongEntity> songEntitySet = albums.get(0).getSongEntities();
@@ -92,10 +95,16 @@ public class MusicController {
             }
             songsDTO.add(dto);
         }
-        Pageable pageRequest = new PageRequest(Integer.parseInt(pageNum), 5, new Sort(Sort.Direction.ASC, "id"));
-        Page<SongDTO> page = new PageImpl<>(songsDTO, pageRequest, songsDTO.size());
-        modelMap.putIfAbsent("totalPages", page.getTotalPages());
-        return page;
+        try {
+            Pageable pageRequest = new PageRequest(Integer.parseInt(pageNum), 5, new Sort(Sort.Direction.ASC, "id"));
+            Page<SongDTO> page = new PageImpl<>(songsDTO, pageRequest, songsDTO.size());
+            modelMap.putIfAbsent("totalPages", page.getTotalPages());
+            modelMap.put("artistRepo", artistRepository.findAll());
+            return page;
+        } catch (NumberFormatException ex) {
+            System.out.println("something went horribly wrong");
+            return null;
+        }
 
 //        modelMap.put("AllSongs", songRepository.findAll(new Sort(Sort.Direction.ASC, "title")));
 //        Page<SongEntity> allTheSongs = songRepository.findAll(pageable);
@@ -292,7 +301,7 @@ public class MusicController {
         return "redirect:/";
     }
 
-    @RequestMapping(value = "addsong")
+    @RequestMapping(value = "/addsong")
     public String renderAddSong(ModelMap modelMap) {
         Song songForm = new Song();
         modelMap.put("albums", getAlbums());
