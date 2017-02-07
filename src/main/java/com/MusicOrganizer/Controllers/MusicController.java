@@ -19,8 +19,11 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+
+import static java.lang.Math.sqrt;
 
 /**
  * Created by user on 1/11/2017.
@@ -58,12 +61,44 @@ public class MusicController {
         return "home";
     }
 
+//    public boolean testPalindrome(int n) {
+//        String s = Integer.toString(n);
+//        String first = s.substring(0, s.length()/2);
+//        String last = s.substring(s.length() - s.length()/2);
+//        for(int i=0; i<first.length(); i++)
+//            if(first.charAt(i) != last.charAt(last.length()-1-i))
+//                return false;
+//        return true;
+//    }
+//
+//    public boolean isPrime(int n) {
+//        for (int i = 0; i < sqrt(n); i++) {
+//
+//        }
+//    }
+
     @ModelAttribute("song")
     public Page<SongDTO> findAllSongs(@PageableDefault(value = 5, page = 0, sort = {"id"}) Pageable pageable, ModelMap modelMap,
                                       @RequestParam(name = "page", required = false, defaultValue = "0")String pageNum) {
 //        String s = "s";
 //        List<AlbumEntity> albums = albumRepository.findAll();
 //        Set<SongEntity> songEntitySet = albums.get(0).getSongEntities();
+
+//        int n;
+//        int k = 2;
+//        for (int i = 0; i < 10000; i++) {
+//
+//        }
+//
+//
+//        modelMap.put("projectEuler", n);
+
+
+
+
+
+
+
 
 
 
@@ -90,8 +125,15 @@ public class MusicController {
                 ArtistEntity artistEntity = albumEntity.getArtistEntity();
                 if(artistEntity == null)
                     dto.setArtist("(none)");
-                else
+                else {
                     dto.setArtist(artistEntity.getArtist());
+                    List<AlbumEntity> albumEntityList = artistEntity.getAlbumEntities();
+                    AlbumEntity[] albumEntityArray = new AlbumEntity[albumEntityList.size()];
+                    for (int i = 0; i < albumEntityList.size(); i++) {
+                        albumEntityArray[i] = albumEntityList.get(i);
+                    }
+                    dto.setAlbumEntities(albumEntityArray);
+                }
             }
             songsDTO.add(dto);
         }
@@ -109,6 +151,28 @@ public class MusicController {
 //        modelMap.put("AllSongs", songRepository.findAll(new Sort(Sort.Direction.ASC, "title")));
 //        Page<SongEntity> allTheSongs = songRepository.findAll(pageable);
 //        return allTheSongs;
+    }
+
+    @RequestMapping(value = "/getAlbums", method = RequestMethod.POST)
+    @ResponseBody
+    public String getAlbums(@RequestParam("songId") String songId, @RequestParam("artistId") String artistId) {
+        ArtistEntity artistEntity = artistRepository.findById(Long.parseLong(artistId));
+        List<AlbumEntity> albumEntityList = artistEntity.getAlbumEntities();
+        List<String> options = new LinkedList<>();
+        AlbumEntity albumE = songRepository.findById(Long.parseLong(songId)).getAlbumEntity();
+        for (AlbumEntity albumEntity: albumEntityList) {
+            if(albumEntity.equals(albumE))
+                options.add(0, "<option>" + albumEntity.getTitle() + "</option>");
+            else
+                options.add("<option>" + albumEntity.getTitle() + "</option>");
+        }
+        String opt = "";
+        for (String s: options) {
+            opt += s;
+        }
+        System.out.println("song id: " + songId);
+        System.out.println("artist id: " + artistId + "\n");
+        return opt;
     }
 //    @RequestParam(value = "title") String title,
 
@@ -183,7 +247,7 @@ public class MusicController {
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
     @RequestMapping(value = "/email/{id}")
     public String email(ModelMap modelMap, @PathVariable("id") String id) {
-        modelMap.put("emailSong", songRepository.findById(Integer.toUnsignedLong(Integer.parseInt(id))).get(0));
+        modelMap.put("emailSong", songRepository.findById(Integer.toUnsignedLong(Integer.parseInt(id))));
         //modelMap.put("emailSong", ((ArrayList) modelMap.get("AllSongs")).get(Integer.parseInt(id)));
         return "email";
     }
@@ -194,7 +258,7 @@ public class MusicController {
         sender.setMailSender();
         sender.setTemplateMessage(new SimpleMailMessage());
         String[] recipients = {email};
-        String[] songs = {songRepository.findById(Integer.toUnsignedLong(Integer.parseInt(id))).get(0).getString()};
+        String[] songs = {songRepository.findById(Integer.toUnsignedLong(Integer.parseInt(id))).getString()};
         sender.sendMail(MusicMailSender.TYPE_JAVA, recipients, songs, modelMap);
 //        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("musicorganizer/src/main/webapp/WEB-INF/config/servlet-config.xml");
 //        MusicMailSender ms = (MusicMailSender) context.getBean("mailSender");

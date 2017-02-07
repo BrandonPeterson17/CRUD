@@ -9,30 +9,10 @@
     <!-- jQuery library -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <!-- Latest compiled JavaScript -->
-    <spring:url value="/js/home.js" var="homeJS"/>
-
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
-    <script>
-        function updateAlbums(artistId) {
-
-        }
-
-        $(document).ready(function () {
-            <%--$('td').on('mouseleave', function () {--%>
-                <%--var albums = '${albums}';--%>
-                <%--$('#test').text('Hello World');--%>
-
-            <%--});--%>
-
-            $('button').on('click', function () {
-                //alert('on click 2');
-                $(this).text('Hello once more');
-            });
-
-
-        });
-    </script>
+    <spring:url value="/resources/home.js" var="homeJS"/>
+    <script src="${homeJS}"></script>
 </head>
 <body>
     <h1>Music Organizer Plus</h1>
@@ -60,14 +40,37 @@
             <td>Remove</td>
             <td>Select</td>
         </tr>
+        <script type="text/javascript">
+            function getAlbums(options) {
+                var settings = $.extend({
+                    'songId': '1',
+                    'artistId': '-1'
+                }, options);
+                if(settings.artistId === '-1') {
+                    settings.artistId = $('#artist_drop_' + settings.songId).val();
+                }
+                $.ajax('/getAlbums', {
+                    data: {'artistId': settings.artistId,
+                        'songId': settings.songId},
+                    method: 'POST',
+                    success: function(result) {
+                        $("#album_drop_" + settings.songId).html(result);
+                    },
+                    error: function (error) {
+                        $("#album_drop_" + settings.songId).html(error);
+                    }
+                });
+            }
+
+        </script>
         <c:forEach items = "${song.content}" var = "songDTO" begin="${param.page * 5}" end="${(param.page * 5) + 4}">
         <tr>
 
             <form:form class="edit" method="post" action="/edit/${songDTO.id}?page=${param.page}" commandName="editForm">
             <td>${songDTO.id}</td>
             <td><form:input cssclass="edit_input" path="title" value="${songDTO.title}" /></td>
-
-            <td><form:select onchange="${updateAlbums(songDTO.albumEntity.getArtistEntity().getId())}" id="artist_drop" path="artistId" cssClass="edit_input" data-songId="${songDTO.id}">
+                <!--onchange="S{updateAlbums(songDTO.albumEntity.getArtistEntity().getId())}" -->
+            <td><form:select onchange="getAlbums({'songId': '${songDTO.id}'})" id="artist_drop_${songDTO.id}" path="artistId" cssClass="edit_input" data-songId="${songDTO.id}">
                 <c:forEach items="${artistRepo}" var="artist">
                     <c:if test="${artist.getId() == songDTO.albumEntity.getArtistEntity().getId()}"> <!--finds only matching artist to put first-->
                         <form:option label="${artist.getArtist()}" value="${artist.getId()}" />
@@ -80,18 +83,13 @@
                 </c:forEach>
             </form:select></td>
 
-            <td><form:select cssClass="edit_input" path="albumId" data-songId="${songDTO.id}"> <!--album id, not song id-->
-                <c:forEach items="${songDTO.albumEntity.getArtistEntity().getAlbumEntities()}" var="album">
-                    <c:if test="${album.getId() == songDTO.albumEntity.getId()}"> <!--finds only matching album to put first-->
-                        <form:option label="${album.getTitle()} (${album.getArtistEntity().getArtist()})" value="${album.getId()}" />
-                    </c:if>
-                </c:forEach>
-                <c:forEach items="${songDTO.albumEntity.getArtistEntity().getAlbumEntities()}" var="album">
-                    <c:if test="${album.getId() != songDTO.albumEntity.getId()}"> <!--gets the rest, ignorinng first to avoid duplicates-->
-                        <form:option label="${album.getTitle()} (${album.getArtistEntity().getArtist()})" value="${album.getId()}" />
-                    </c:if>
-                </c:forEach>
-            </form:select></td>
+            <td><select id="album_drop_${songDTO.id}" class="test-javascript"></select></td>
+
+            <script type="text/javascript">
+                $(document).ready(function () {
+                    getAlbums({'songId': "${songDTO.id}",'artistId': "${songDTO.albumEntity.getArtistEntity().getId()}"});
+                });
+            </script>
 
             <td><form:input cssClass="edit_input" path="date" value="${songDTO.date}" size="8"/></td>
             <td><form:input cssClass="edit_input" path="genre" value="${songDTO.genre}"/></td>
@@ -114,6 +112,7 @@
             <td><button id="test">Hi</button></td>
         </tr>
     </table>
+    <h1>${projectEuler}</h1>
 </body>
 </html>
 

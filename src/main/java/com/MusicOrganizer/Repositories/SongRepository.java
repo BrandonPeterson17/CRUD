@@ -21,7 +21,7 @@ public interface SongRepository extends JpaRepository<SongEntity, Long> {
 
     List<SongEntity> findByTitleIgnoreCase(String title);
 
-    List<SongEntity> findById(long id);
+    SongEntity findById(long id);
 
     @Query("SELECT s FROM SongEntity s WHERE LOWER(s.title) LIKE LOWER(:title)")
     Page<SongEntity> findByTitle(Pageable pageable, @Param("title") String title);

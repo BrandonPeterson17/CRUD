@@ -1,6 +1,7 @@
 package com.MusicOrganizer.Controllers;
 
 import com.MusicOrganizer.Greeting;
+import com.fasterxml.jackson.databind.JsonSerializer;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,6 +19,7 @@ public class HomeRestController {
 
     @RequestMapping("/greeting")
     public Greeting greeting(@RequestParam(name = "name", defaultValue = "World") String name) {
+
         return new Greeting(String.format(template, name), counter.getAndIncrement());
     }
 }

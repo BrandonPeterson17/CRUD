@@ -16,6 +16,7 @@ public class SongDTO {
     private int rating;
     private String ratSt;
     private AlbumEntity albumEntity;
+    private AlbumEntity[] albumEntities;
 
     public SongDTO() {}
 
@@ -105,5 +106,13 @@ public class SongDTO {
 
     public void setAlbumEntity(AlbumEntity albumEntity) {
         this.albumEntity = albumEntity;
+    }
+
+    public AlbumEntity[] getAlbumEntities() {
+        return albumEntities;
+    }
+
+    public void setAlbumEntities(AlbumEntity[] albumEntities) {
+        this.albumEntities = albumEntities;
     }
 }
