@@ -68,4 +68,6 @@ public class AlbumEntity {
         this.artistEntity = artistEntity;
     }
 
+    //this is a small change
+
 }
