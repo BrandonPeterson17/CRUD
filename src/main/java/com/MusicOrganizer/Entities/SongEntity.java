@@ -56,8 +56,17 @@ public class SongEntity {
         this.rating = rating;
     }
 
+    @Column(name = "album_seq")
+    private long albumId;
+    public long getAlbumId() {
+        return albumId;
+    }
+    public void setAlbumId(long albumId) {
+        this.albumId = albumId;
+    }
+
     @ManyToOne
-    @JoinColumn(name = "album_seq")
+    @JoinColumn(name = "album_seq", insertable = false, updatable = false)
     private AlbumEntity albumEntity;
     public AlbumEntity getAlbumEntity() {
         return albumEntity;

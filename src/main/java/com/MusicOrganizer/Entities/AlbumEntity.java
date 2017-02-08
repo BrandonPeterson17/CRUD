@@ -49,6 +49,15 @@ public class AlbumEntity {
         this.date = date;
     }
 
+    @Column(name = "artist_seq")
+    private long artistId;
+    public long getArtistId() {
+        return artistId;
+    }
+    public void setArtistId(long artistId) {
+        this.artistId = artistId;
+    }
+
     @OneToMany(mappedBy = "albumEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<SongEntity> songEntities;
     public List<SongEntity> getSongEntities() {
@@ -58,8 +67,8 @@ public class AlbumEntity {
         this.songEntities = songEntities;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "artist_seq")
+    @ManyToOne//(targetEntity = AlbumEntity.class)
+    @JoinColumn(name = "artist_seq", insertable = false, updatable = false)//,  //referencedColumnName = "artist_seq"
     private ArtistEntity artistEntity;
     public ArtistEntity getArtistEntity() {
         return artistEntity;

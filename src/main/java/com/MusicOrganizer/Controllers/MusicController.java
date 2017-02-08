@@ -101,7 +101,6 @@ public class MusicController {
 
 
 
-
         List<SongEntity> songs = songRepository.findAll();
         List<SongDTO> songsDTO = new ArrayList<>();
         for(SongEntity songEntity: songs) {
