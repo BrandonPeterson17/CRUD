@@ -76,7 +76,7 @@ public class MusicController {
 //    }
 
     @ModelAttribute("song")
-    public Page<SongDTO> findAllSongs(@PageableDefault(value = 5, page = 0, sort = {"id"}) Pageable pageable, ModelMap modelMap,
+    public Page<SongEntity> findAllSongs(@PageableDefault(value = 5, page = 0, sort = {"title"}) Pageable pageable, ModelMap modelMap,
                                       @RequestParam(name = "page", required = false, defaultValue = "0")String pageNum) {
 //        String s = "s";
 //        List<AlbumEntity> albums = albumRepository.findAll();
@@ -92,62 +92,11 @@ public class MusicController {
 //        modelMap.put("projectEuler", n);
 
 
-
-
-
-
-
-
-
-        List<SongEntity> songs = songRepository.findAll();
-        List<SongDTO> songsDTO = new ArrayList<>();
-        for(SongEntity songEntity: songs) {
-            SongDTO dto = new SongDTO();
-            dto.setId(songEntity.getId());
-            dto.setTitle(songEntity.getTitle());
-            dto.setGenre(songEntity.getGenre());
-            dto.setRating(songEntity.getRating());
-
-            AlbumEntity albumEntity = songEntity.getAlbumEntity();
-            if(albumEntity == null) {
-                dto.setAlbum("(none)");
-                dto.setDate("(none)");
-                dto.setArtist("(none)");
-            } else {
-                dto.setAlbum(albumEntity.getTitle());
-                dto.setDate(albumEntity.getDate());
-                dto.setAlbumEntity(albumEntity);
-                dto.setAlbumId(Long.toString(albumEntity.getId()));
-
-                ArtistEntity artistEntity = albumEntity.getArtistEntity();
-                if(artistEntity == null)
-                    dto.setArtist("(none)");
-                else {
-                    dto.setArtist(artistEntity.getArtist());
-                    List<AlbumEntity> albumEntityList = artistEntity.getAlbumEntities();
-                    AlbumEntity[] albumEntityArray = new AlbumEntity[albumEntityList.size()];
-                    for (int i = 0; i < albumEntityList.size(); i++) {
-                        albumEntityArray[i] = albumEntityList.get(i);
-                    }
-                    dto.setAlbumEntities(albumEntityArray);
-                }
-            }
-            songsDTO.add(dto);
-        }
-        try {
-            Pageable pageRequest = new PageRequest(Integer.parseInt(pageNum), 5, new Sort(Sort.Direction.ASC, "id"));
-            Page<SongDTO> page = new PageImpl<>(songsDTO, pageRequest, songsDTO.size());
-            modelMap.putIfAbsent("totalPages", page.getTotalPages());
-            modelMap.put("artistRepo", artistRepository.findAll());
-            return page;
-        } catch (NumberFormatException ex) {
-            System.out.println("something went horribly wrong");
-            return null;
-        }
-
-//        modelMap.put("AllSongs", songRepository.findAll(new Sort(Sort.Direction.ASC, "title")));
-//        Page<SongEntity> allTheSongs = songRepository.findAll(pageable);
-//        return allTheSongs;
+        List<SongEntity> allTheSongs = songRepository.findAll(new Sort(Sort.Direction.ASC, "title"));
+        modelMap.put("totalPages", allTheSongs.size()/5 + 1);
+        modelMap.put("artistRepo", artistRepository.findAll());
+        modelMap.put("songTry", allTheSongs);
+        return null;
     }
 
     @RequestMapping(value = "/getAlbums", method = RequestMethod.POST)
@@ -159,9 +108,9 @@ public class MusicController {
         AlbumEntity albumE = songRepository.findById(Long.parseLong(songId)).getAlbumEntity();
         for (AlbumEntity albumEntity: albumEntityList) {
             if(albumEntity.equals(albumE))
-                options.add(0, "<option>" + albumEntity.getTitle() + "</option>");
+                options.add(0, "<option value=\"" + albumEntity.getId() + "\">" + albumEntity.getTitle() + "</option>");
             else
-                options.add("<option>" + albumEntity.getTitle() + "</option>");
+                options.add("<option value=\"" + albumEntity.getId() + "\">" + albumEntity.getTitle() + "</option>");
         }
         String opt = "";
         for (String s: options) {
@@ -169,7 +118,6 @@ public class MusicController {
         }
         return opt;
     }
-//    @RequestParam(value = "title") String title,
 
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public String findByTitle(ModelMap modelMap, @RequestParam("page") String page,
@@ -406,7 +354,8 @@ public class MusicController {
                        @RequestParam("genre") String genre, @RequestParam("rating") String rating,
                        ModelMap modelMap) {
         SongEntity oldSongEnt = songRepository.findOne(songId);
-        List<SongEntity> albumSongs = albumRepository.findById(Long.parseLong(albumId)).getSongEntities();
+        AlbumEntity oldAlbumEnt = albumRepository.findById(Long.parseLong(albumId));
+        List<SongEntity> albumSongs = oldAlbumEnt.getSongEntities();
         List<String> errs = new ArrayList<>();
 
         if(oldSongEnt.getAlbumId() != Long.parseLong(albumId)) { //check for duplicate song
@@ -441,8 +390,11 @@ public class MusicController {
             return message;
         }
 
+        oldAlbumEnt.setDate(date);
+        albumRepository.save(oldAlbumEnt);
+
         oldSongEnt.setAlbumId(Long.parseLong(albumId));
-        oldSongEnt.setAlbumEntity(albumRepository.findById(Long.parseLong(albumId)));
+        oldSongEnt.setAlbumEntity(oldAlbumEnt);
         oldSongEnt.setGenre(genre);
         oldSongEnt.setTitle(title);
         oldSongEnt.setRating(Integer.parseInt(rating));

@@ -27,7 +27,7 @@
             <td colspan="7" align="center">SONGS</td>
             <td colspan="2" align="center">EDIT</td>
             <td align="center">EMAIL</td>
-            <td rowspan="8" class="nav_back" ><a class="nav" href="/home/?page=${(param.page < totalPages - param.page - 1) ? param.page + 1 : param.page}">&gt;</a></td>
+            <td rowspan="8" class="nav_back" ><a class="nav" href="/home/?page=${(param.page < totalPages - 1) ? param.page + 1 : param.page}">&gt;</a></td>
         </tr>
         <tr>
             <td>Song Num</td>
@@ -99,47 +99,46 @@
                         message = 'Something Went Wrong...';
                     }
                 });
-                alert('artistId: ' + typeof id + " " + typeof options.page);
             }
 
         </script>
-        <c:forEach items = "${song.content}" var = "songDTO" begin="${param.page * 5}" end="${(param.page * 5) + 4}">
-        <tr id="row_${songDTO.id}">
+        <c:forEach items = "${songTry}" var ="song" begin="${param.page * 5}" end="${(param.page * 5) + 4}" step="1">
+        <tr id="row_${song.id}">
 
-            <form id="edit_form_${songDTO.id}" class="edit_form" method="post"> <!--onsubmit="requestEdit({'page': S{param.page}, 'songId': S{songDTO.id}});">-->
-            <td>${songDTO.id}</td>
-            <td><input id="edit_title_${songDTO.id}" class="edit_title" value="${songDTO.title}" /></td>
+            <form id="edit_form_${song.id}" class="edit_form" method="post"> <!--onsubmit="requestEdit({'page': S{param.page}, 'songId': S{songDTO.id}});">-->
+            <td>${song.id}</td>
+            <td><input id="edit_title_${song.id}" class="edit_title" value="${song.title}" /></td>
                 <!--onchange="S{updateAlbums(songDTO.albumEntity.getArtistEntity().getId())}" -->
-            <td><select onchange="getAlbums({'songId': '${songDTO.id}'})" id="artist_drop_${songDTO.id}" class="artist_drop">
+            <td><select onchange="getAlbums({'songId': '${song.id}'})" id="artist_drop_${song.id}" class="artist_drop">
                 <c:forEach items="${artistRepo}" var="artist">
-                    <c:if test="${artist.getId() == songDTO.albumEntity.getArtistEntity().getId()}"> <!--finds only matching artist to put first-->
+                    <c:if test="${artist.getId() == song.albumEntity.getArtistEntity().getId()}"> <!--finds only matching artist to put first-->
                         <option value="${artist.getId()}">${artist.getArtist()}</option>
                     </c:if>
                 </c:forEach>
                 <c:forEach items="${artistRepo}" var="artist">
-                    <c:if test="${artist.getId() != songDTO.albumEntity.getArtistEntity().getId()}"> <!--finds only matching artist to put first-->
+                    <c:if test="${artist.getId() != song.albumEntity.getArtistEntity().getId()}"> <!--finds only matching artist to put first-->
                         <option value="${artist.getId()}">${artist.getArtist()}</option>
                     </c:if>
                 </c:forEach>
             </select></td>
 
-            <td><select id="album_drop_${songDTO.id}" class="album_drop"></select></td>
+            <td><select id="album_drop_${song.id}" class="album_drop"></select></td>
 
             <script type="text/javascript">
                 $(document).ready(function () {
-                    getAlbums({'songId': "${songDTO.id}",'artistId': "${songDTO.albumEntity.getArtistEntity().getId()}"});
+                    getAlbums({'songId': "${song.id}",'artistId': "${song.albumEntity.getArtistEntity().getId()}"});
                 });
             </script>
 
-            <td><input id="edit_date_${songDTO.id}" class="edit_date" value="${songDTO.date}" size="8"/></td>
-            <td><input id="edit_genre_${songDTO.id}" class="edit_genre" value="${songDTO.genre}" size="15"/></td>
-            <td><input id="edit_rating_${songDTO.id}" class="edit_rating" value="${songDTO.rating}" size="4"/></td>
+            <td><input id="edit_date_${song.id}" class="edit_date" value="${song.albumEntity.getDate()}" size="8"/></td>
+            <td><input id="edit_genre_${song.id}" class="edit_genre" value="${song.genre}" size="15"/></td>
+            <td><input id="edit_rating_${song.id}" class="edit_rating" value="${song.rating}" size="4"/></td>
 
 
-                <td><button class="edit_submit" type="button" onclick="requestEdit({'page': ${param.page}, 'songId': ${songDTO.id}})" >Save</button></td>
+                <td><button class="edit_submit" type="button" onclick="requestEdit({'page': ${param.page}, 'songId': ${song.id}})" >Save</button></td>
             </form>
-            <form class="delete" method="post" action="/delete/${songDTO.id}?page=${param.page}"><td><input class="delete_btn" type="submit" value="Delete" /></td></form>
-            <form class="email" method="post" action="/email/${songDTO.id}"><td><input class="email_btn" type="submit" value="Email"/></td></form>
+            <form class="delete" method="post" action="/delete/${song.id}?page=${param.page}"><td><input class="delete_btn" type="submit" value="Delete" /></td></form>
+            <form class="email" method="post" action="/email/${song.id}"><td><input class="email_btn" type="submit" value="Email"/></td></form>
         </tr>
         </c:forEach>
         <tr>
@@ -147,9 +146,6 @@
             <td colspan="1"><a href="/addartist"><button class="add">Add Artist</button></a></td>
             <td colspan="1"><a href="/addalbum"><button class="add">Add Album</button></a></td>
             <td colspan="6"><a href="/search/page/?page=0&title="><button id="search">Search</button></a></td>
-        </tr>
-        <tr>
-            <td><button id="test">Hi</button></td>
         </tr>
     </table>
     <h1 id="projectEuler">${projectEuler}</h1>
