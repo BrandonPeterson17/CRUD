@@ -169,8 +169,6 @@ public class MusicController {
         for (String s: options) {
             opt += s;
         }
-        System.out.println("song id: " + songId);
-        System.out.println("artist id: " + artistId + "\n");
         return opt;
     }
 //    @RequestParam(value = "title") String title,
@@ -403,53 +401,55 @@ public class MusicController {
         return "redirect:/home/?page=" + page;
     }
 
-    @RequestMapping(value = "/edit/{id}", method = RequestMethod.POST)
-    public String edit(@PathVariable("id") Long songId, @RequestParam("page") int page,
-                       @ModelAttribute("editForm") Song song, ModelMap modelMap) {
-        SongEntity songEntity = songRepository.findOne(songId);
-        String title = song.getTitle();
-        String rating = song.getRating();
-        String artist = song.getArtist();
-        String genre = song.getGenre();
-        String album = song.getAlbum();
-        String albumId = song.getAlbumId();
-        String date = song.getDate();
-        if (title.equals(""))
-            title = songEntity.getTitle();
-        if (rating == null || rating.isEmpty())
-            rating = Integer.toString(songEntity.getRating());
-        System.out.println("Title: " + title + "\nArtist: " + artist + "\nGenre: " + genre +
-                "\nRating: " + rating + "\n");
-        ErrorInput errors = new ErrorInput(songRepository, albumRepository, artistRepository);
-        ArrayList<String> errmsg = errors.checkSong(title, genre, rating, album, date, artist);
-        if (errmsg.size() > 0) {
-            modelMap.put("inputErrors", errmsg);
-            song.setTitle(title);
-            song.setArtist(artist);
-            song.setAlbum(album);
-            song.setDate(date);
-            song.setGenre(genre);
-            song.setAlbumId(albumId);
-            //song.setRating(rating);
-            modelMap.put("editForm", song);
-            System.out.println("Input has the following errors:\n" + errors.getErrorStrings(ErrorInput.PRINT));
-        } else {
-            songEntity.setTitle(title);
-            if (!genre.equals(""))
-                songEntity.setGenre(genre);
-            songEntity.setRating(Integer.parseInt(rating));
-            if(!album.equals(""))
-                songEntity.getAlbumEntity().setTitle(album);
-            if(!date.equals(""))
-                songEntity.getAlbumEntity().setDate(date);
-            if(!artist.equals(""))
-                songEntity.getArtistEntity().setArtist(artist);
-            artistRepository.save(songEntity.getArtistEntity());
-            albumRepository.save(songEntity.getAlbumEntity());
-            songRepository.save(songEntity);
-            modelMap.put("inputErrors", null);
-        }
-        return "redirect:/home/?page=" + page;
+    @RequestMapping(value = "/edit", method = RequestMethod.POST)
+    @ResponseBody
+    public String edit(@RequestParam("songId") Long songId, @RequestParam("page") int page, ModelMap modelMap) {
+//        SongEntity songEntity = songRepository.findOne(songId);
+//        String title = song.getTitle();
+//        String rating = song.getRating();
+//        String artist = song.getArtist();
+//        String genre = song.getGenre();
+//        String album = song.getAlbum();
+//        String albumId = song.getAlbumId();
+//        String date = song.getDate();
+//        if (title.equals(""))
+//            title = songEntity.getTitle();
+//        if (rating == null || rating.isEmpty())
+//            rating = Integer.toString(songEntity.getRating());
+//        System.out.println("Title: " + title + "\nArtist: " + artist + "\nGenre: " + genre +
+//                "\nRating: " + rating + "\n");
+//        ErrorInput errors = new ErrorInput(songRepository, albumRepository, artistRepository);
+//        ArrayList<String> errmsg = errors.checkSong(title, genre, rating, album, date, artist);
+//        if (errmsg.size() > 0) {
+//            modelMap.put("inputErrors", errmsg);
+//            song.setTitle(title);
+//            song.setArtist(artist);
+//            song.setAlbum(album);
+//            song.setDate(date);
+//            song.setGenre(genre);
+//            song.setAlbumId(albumId);
+//            //song.setRating(rating);
+//            modelMap.put("editForm", song);
+//            System.out.println("Input has the following errors:\n" + errors.getErrorStrings(ErrorInput.PRINT));
+//        } else {
+//            songEntity.setTitle(title);
+//            if (!genre.equals(""))
+//                songEntity.setGenre(genre);
+//            songEntity.setRating(Integer.parseInt(rating));
+//            if(!album.equals(""))
+//                songEntity.getAlbumEntity().setTitle(album);
+//            if(!date.equals(""))
+//                songEntity.getAlbumEntity().setDate(date);
+//            if(!artist.equals(""))
+//                songEntity.getArtistEntity().setArtist(artist);
+//            artistRepository.save(songEntity.getArtistEntity());
+//            albumRepository.save(songEntity.getAlbumEntity());
+//            songRepository.save(songEntity);
+//            modelMap.put("inputErrors", null);
+//        }
+        System.out.println("About that...");
+        return "About that...";
+//        return "redirect:/home/?page=" + page;
 
 
 

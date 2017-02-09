@@ -53,6 +53,12 @@
                     data: {'artistId': settings.artistId,
                         'songId': settings.songId},
                     method: 'POST',
+                    beforeSend: function () {
+                        $('#projectEuler').html('Saving...').fadeIn();
+                    },
+                    complete: function () {
+                        $('#projectEuler').html('Done!').fadeOut();
+                    },
                     success: function(result) {
                         $("#album_drop_" + settings.songId).html(result);
                     },
@@ -62,28 +68,60 @@
                 });
             }
 
+            function requestEdit(options) {
+                var id = options.songId;
+                var row = $('#row_${songDTO.id}');
+                $.ajax('/edit', {
+                    success: function(result) {
+                        $('#aboutThat__').html(result).fadeIn();
+                        alert('success!!! ' + result);
+                    },
+                    data: {
+                        'songId': id,
+                        'page': options.page,
+                        'title': row.find('.edit_title').val(),
+                        'artistId': row.find('.artist_drop').val(),
+                        'albumId': row.find('.album_drop').val(),
+                        'date': row.find('.edit_date').val(),
+                        'genre': row.find('.edit_genre').val(),
+                        'rating': row.find('.edit_rating').val()
+                    },
+                    method: 'POST',
+                    beforeSend: function () {
+                        $('#projectEuler').html('Saving...').fadeIn();
+                    },
+                    complete: function () {
+                        $('#projectEuler').html('Done!').fadeOut();
+                    },
+                    fail: function (error) {
+
+                    }
+                });
+                alert('artistId: ' + row.find('.artist_drop').val());
+            }
+
         </script>
         <c:forEach items = "${song.content}" var = "songDTO" begin="${param.page * 5}" end="${(param.page * 5) + 4}">
-        <tr>
+        <tr id="row_${songDTO.id}">
 
-            <form:form class="edit" method="post" action="/edit/${songDTO.id}?page=${param.page}" commandName="editForm">
+            <form id="edit_form_${songDTO.id}" class="edit_form" method="post"> <!--onsubmit="requestEdit({'page': S{param.page}, 'songId': S{songDTO.id}});">-->
             <td>${songDTO.id}</td>
-            <td><form:input cssclass="edit_input" path="title" value="${songDTO.title}" /></td>
+            <td><input id="edit_title_${songDTO.id}" class="edit_title" value="${songDTO.title}" /></td>
                 <!--onchange="S{updateAlbums(songDTO.albumEntity.getArtistEntity().getId())}" -->
-            <td><form:select onchange="getAlbums({'songId': '${songDTO.id}'})" id="artist_drop_${songDTO.id}" path="artistId" cssClass="edit_input" data-songId="${songDTO.id}">
+            <td><select onchange="getAlbums({'songId': '${songDTO.id}'})" id="artist_drop_${songDTO.id}" class="artist_drop">
                 <c:forEach items="${artistRepo}" var="artist">
                     <c:if test="${artist.getId() == songDTO.albumEntity.getArtistEntity().getId()}"> <!--finds only matching artist to put first-->
-                        <form:option label="${artist.getArtist()}" value="${artist.getId()}" />
+                        <option value="${artist.getId()}">${artist.getArtist()}</option>
                     </c:if>
                 </c:forEach>
                 <c:forEach items="${artistRepo}" var="artist">
                     <c:if test="${artist.getId() != songDTO.albumEntity.getArtistEntity().getId()}"> <!--finds only matching artist to put first-->
-                        <form:option label="${artist.getArtist()}" value="${artist.getId()}" />
+                        <option value="${artist.getId()}">${artist.getArtist()}</option>
                     </c:if>
                 </c:forEach>
-            </form:select></td>
+            </select></td>
 
-            <td><select id="album_drop_${songDTO.id}" class="test-javascript"></select></td>
+            <td><select id="album_drop_${songDTO.id}" class="album_drop"></select></td>
 
             <script type="text/javascript">
                 $(document).ready(function () {
@@ -91,13 +129,13 @@
                 });
             </script>
 
-            <td><form:input cssClass="edit_input" path="date" value="${songDTO.date}" size="8"/></td>
-            <td><form:input cssClass="edit_input" path="genre" value="${songDTO.genre}"/></td>
-            <td><form:input cssClass="edit_input" path="rating" value="${songDTO.rating}" size="4"/></td>
+            <td><input id="edit_date_${songDTO.id}" class="edit_date" value="${songDTO.date}" size="8"/></td>
+            <td><input id="edit_genre_${songDTO.id}" class="edit_genre" value="${songDTO.genre}" size="15"/></td>
+            <td><input id="edit_rating_${songDTO.id}" class="edit_rating" value="${songDTO.rating}" size="4"/></td>
 
 
-                <td><form:button class="edit_submit" type="submit" >Save</form:button></td>
-            </form:form>
+                <td><button class="edit_submit" type="button" onclick="requestEdit({'page': ${param.page}, 'songId': ${songDTO.id}})" >Save</button></td>
+            </form>
             <form class="delete" method="post" action="/delete/${songDTO.id}?page=${param.page}"><td><input class="delete_btn" type="submit" value="Delete" /></td></form>
             <form class="email" method="post" action="/email/${songDTO.id}"><td><input class="email_btn" type="submit" value="Email"/></td></form>
         </tr>
@@ -112,7 +150,8 @@
             <td><button id="test">Hi</button></td>
         </tr>
     </table>
-    <h1>${projectEuler}</h1>
+    <h1 id="projectEuler">${projectEuler}</h1>
+    <h2 id="aboutThat__"></h2>
 </body>
 </html>
 
