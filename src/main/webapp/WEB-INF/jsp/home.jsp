@@ -55,6 +55,7 @@
                         'songId': settings.songId},
                     method: 'POST',
                     success: function(result) {
+                        if(result == '') {}
                         $("#album_drop_" + settings.songId).html(result);
                     },
                     error: function (error) {
@@ -116,13 +117,14 @@
                     </c:if>
                 </c:forEach>
                 <c:forEach items="${artistRepo}" var="artist">
-                    <c:if test="${artist.getId() != song.albumEntity.getArtistEntity().getId()}"> <!--finds only matching artist to put first-->
+                    <c:if test="${artist.getId() != song.albumEntity.getArtistEntity().getId() && artist.getAlbumEntities().size()>0}"> <!--finds only matching artist to put first-->
                         <option value="${artist.getId()}">${artist.getArtist()}</option>
                     </c:if>
+
                 </c:forEach>
             </select></td>
 
-            <td><select id="album_drop_${song.id}" class="album_drop"></select></td>
+            <td ><select id="album_drop_${song.id}" class="album_drop"></select></td>
 
             <script type="text/javascript">
                 $(document).ready(function () {
@@ -150,6 +152,7 @@
     </table>
     <h1 id="projectEuler">${projectEuler}</h1>
     <h2 id="aboutThat__"></h2>
+    <img src="https://s-media-cache-ak0.pinimg.com/originals/8a/a9/cf/8aa9cffc165fa17bb74c5ddae2266a94.gif"/>
 </body>
 </html>
 
@@ -161,6 +164,19 @@
     input {
         font-family: "Agency FB", sans-serif;
         font-weight: bold;
+    }
+
+    select {
+        width: 100%;
+        text-align-last: center;
+    }
+
+    input {
+        text-align: center;
+    }
+
+    img {
+        margin-left: 40%;
     }
 
     table {
