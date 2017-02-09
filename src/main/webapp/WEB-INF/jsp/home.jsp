@@ -17,6 +17,7 @@
 <body>
     <h1>Music Organizer Plus</h1>
     <h3>By Brandon Peterson</h3>
+    <div id="errmsgs"></div>
     <c:forEach items="${inputErrors}" var="errormsg">
         <p class="errormsg">Error : <c:out value="${errormsg}"/></p>
     </c:forEach>
@@ -53,12 +54,6 @@
                     data: {'artistId': settings.artistId,
                         'songId': settings.songId},
                     method: 'POST',
-                    beforeSend: function () {
-                        $('#projectEuler').html('Saving...').fadeIn();
-                    },
-                    complete: function () {
-                        $('#projectEuler').html('Done!').fadeOut();
-                    },
                     success: function(result) {
                         $("#album_drop_" + settings.songId).html(result);
                     },
@@ -70,11 +65,16 @@
 
             function requestEdit(options) {
                 var id = options.songId;
-                var row = $('#row_${songDTO.id}');
+                var row = $('#row_' + id);
+                var message = '';
                 $.ajax('/edit', {
                     success: function(result) {
-                        $('#aboutThat__').html(result).fadeIn();
-                        alert('success!!! ' + result);
+                        if(result == "") {
+                            message = 'Save Successful!';
+                        } else {
+                            $('#errmsgs').html(result).slideDown();
+                            message = 'Invalid Input...';
+                        }
                     },
                     data: {
                         'songId': id,
@@ -89,15 +89,17 @@
                     method: 'POST',
                     beforeSend: function () {
                         $('#projectEuler').html('Saving...').fadeIn();
+                        $('#errmsgs').slideUp();
                     },
                     complete: function () {
-                        $('#projectEuler').html('Done!').fadeOut();
+                        $('#projectEuler').html(message).fadeOut();
                     },
                     fail: function (error) {
-
+                        alert('uh oh...');
+                        message = 'Something Went Wrong...';
                     }
                 });
-                alert('artistId: ' + row.find('.artist_drop').val());
+                alert('artistId: ' + typeof id + " " + typeof options.page);
             }
 
         </script>

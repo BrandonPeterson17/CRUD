@@ -12,16 +12,14 @@ import com.MusicOrganizer.Repositories.SongRepository;
 import com.MusicOrganizer.Song;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static java.lang.Math.sqrt;
 
@@ -403,74 +401,52 @@ public class MusicController {
 
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     @ResponseBody
-    public String edit(@RequestParam("songId") Long songId, @RequestParam("page") int page, ModelMap modelMap) {
-//        SongEntity songEntity = songRepository.findOne(songId);
-//        String title = song.getTitle();
-//        String rating = song.getRating();
-//        String artist = song.getArtist();
-//        String genre = song.getGenre();
-//        String album = song.getAlbum();
-//        String albumId = song.getAlbumId();
-//        String date = song.getDate();
-//        if (title.equals(""))
-//            title = songEntity.getTitle();
-//        if (rating == null || rating.isEmpty())
-//            rating = Integer.toString(songEntity.getRating());
-//        System.out.println("Title: " + title + "\nArtist: " + artist + "\nGenre: " + genre +
-//                "\nRating: " + rating + "\n");
-//        ErrorInput errors = new ErrorInput(songRepository, albumRepository, artistRepository);
-//        ArrayList<String> errmsg = errors.checkSong(title, genre, rating, album, date, artist);
-//        if (errmsg.size() > 0) {
-//            modelMap.put("inputErrors", errmsg);
-//            song.setTitle(title);
-//            song.setArtist(artist);
-//            song.setAlbum(album);
-//            song.setDate(date);
-//            song.setGenre(genre);
-//            song.setAlbumId(albumId);
-//            //song.setRating(rating);
-//            modelMap.put("editForm", song);
-//            System.out.println("Input has the following errors:\n" + errors.getErrorStrings(ErrorInput.PRINT));
-//        } else {
-//            songEntity.setTitle(title);
-//            if (!genre.equals(""))
-//                songEntity.setGenre(genre);
-//            songEntity.setRating(Integer.parseInt(rating));
-//            if(!album.equals(""))
-//                songEntity.getAlbumEntity().setTitle(album);
-//            if(!date.equals(""))
-//                songEntity.getAlbumEntity().setDate(date);
-//            if(!artist.equals(""))
-//                songEntity.getArtistEntity().setArtist(artist);
-//            artistRepository.save(songEntity.getArtistEntity());
-//            albumRepository.save(songEntity.getAlbumEntity());
-//            songRepository.save(songEntity);
-//            modelMap.put("inputErrors", null);
-//        }
-        System.out.println("About that...");
-        return "About that...";
-//        return "redirect:/home/?page=" + page;
+    public String edit(@RequestParam("songId") Long songId, @RequestParam("title") String title,
+                       @RequestParam("albumId") String albumId, @RequestParam("date") String date,
+                       @RequestParam("genre") String genre, @RequestParam("rating") String rating,
+                       ModelMap modelMap) {
+        SongEntity oldSongEnt = songRepository.findOne(songId);
+        List<SongEntity> albumSongs = albumRepository.findById(Long.parseLong(albumId)).getSongEntities();
+        List<String> errs = new ArrayList<>();
 
+        if(oldSongEnt.getAlbumId() != Long.parseLong(albumId)) { //check for duplicate song
+            for (SongEntity albumSong : albumSongs)
+                if (albumSong.getTitle().toLowerCase().equals(oldSongEnt.getTitle().toLowerCase()))
+                    errs.add(oldSongEnt.getTitle() + " already exists in " + albumSong.getAlbumEntity().getTitle());
+        }
 
+        if(title.equals(""))
+            errs.add("Title can't be left blank");
 
-//        ErrorInput errorInput = new ErrorInput(songRepository, albumRepository, artistRepository);
-//        System.out.println(id);
-//        AlbumEntity albumEntity = albumRepository.findById(Integer.parseInt(id));
-//        List<String> errmsg = errorInput.checkSong(songTitle, genre, rating, albumEntity.getTitle(), albumEntity.getDate(), albumEntity.getArtistEntity().getArtist());
-//        if(errmsg.size() > 0) {
-//            modelMap.put("inputErrors", errmsg);
-//            song.setId(id);
-//            song.setTitle(songTitle);
-//            song.setRating(rating);
-//            song.setGenre(genre);
-//            modelMap.put("albums", getAlbums());
-//            modelMap.put("songForm", song);
-//            return "add-song";
-//        }
-//        SongEntity songEntity = new SongEntity(songTitle, genre, Integer.parseInt(rating));
-//        System.out.println("rating = " + rating + " = " + Integer.parseInt(rating));
-//        songEntity.setAlbumEntity(albumEntity);
-//        songRepository.save(songEntity);
-//        return "redirect:/";
+        try {
+            int dateInt = Integer.parseInt(date);
+            if(dateInt < 0 || dateInt > 2017)
+                errs.add("Date must be a valid year (ex. 2005)");
+        } catch (NumberFormatException ex) {
+            errs.add("Date must be an integer year (ex. 1967)");
+        }
+
+        try {
+            int ratingInt = Integer.parseInt(rating);
+            if(ratingInt < 1 || ratingInt > 5)
+                errs.add("Rating must be in the range (1-5)");
+        } catch (NumberFormatException ex) {
+            errs.add("Rating must be an integer in the range (1-5)");
+        }
+
+        String message = "";
+        if(errs.size() > 0) {
+            for(String s: errs)
+                message += "<p class=\"errormsg\">" + s + "</p>";
+            return message;
+        }
+
+        oldSongEnt.setAlbumId(Long.parseLong(albumId));
+        oldSongEnt.setAlbumEntity(albumRepository.findById(Long.parseLong(albumId)));
+        oldSongEnt.setGenre(genre);
+        oldSongEnt.setTitle(title);
+        oldSongEnt.setRating(Integer.parseInt(rating));
+        songRepository.save(oldSongEnt);
+        return "";
     }
 }
