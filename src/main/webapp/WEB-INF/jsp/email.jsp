@@ -16,19 +16,20 @@
     <form id="email" method="post" action="/send/${emailSong.id}" commandName="emailForm">
         <table>
             <tr>
-                <td colspan="3">Enter your email and get your song in an email!</td>
+                <td colspan="4">Enter your email and get your song in an email!</td>
                 <td rowspan="3"><input type="submit" /></td>
             </tr>
             <tr>
                 <td>Email: </td>
-                <td colspan="2"><input type="text" name="emailIn" placeholder="<Enter email here>" value=""/></td>
+                <td colspan="3"><input type="text" name="emailIn" placeholder="<Enter email here>" value=""/></td>
             </tr>
             <tr>
-                <td colspan="3">Song stats</td>
+                <td colspan="4">Song stats</td>
             </tr>
             <tr>
                 <td>${emailSong.title}</td>
-                <td>${emailSong.artist}</td>
+                <td>${emailSong.getArtistEntity().getArtist()}</td>
+                <td>${emailSong.getAlbumEntity().getTitle()}</td>
                 <td>${emailSong.genre}</td>
                 <td>${emailSong.rating}</td>
             </tr>
@@ -59,6 +60,7 @@
     td {
         border-bottom: 1px dotted black;
         border-right: 1px dotted black;
+        text-align: center;
     }
 
     .errormsg {

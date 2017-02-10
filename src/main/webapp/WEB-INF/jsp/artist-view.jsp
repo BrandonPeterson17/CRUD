@@ -21,7 +21,7 @@
         <td rowspan="8" class="nav_back" ><a class="nav" href="/artist/?page=${(param.page > 0) ? param.page - 1 : 0}">&lt;</a></td>
         <td colspan="2" align="center">ARTISTS</td>
         <td colspan="3" align="center">EDIT</td>
-        <td rowspan="8" class="nav_back" ><a class="nav" href="/artist/?page=${(param.page < totalAlbumPages - 1) ? param.page + 1 : param.page}">&gt;</a></td>
+        <td rowspan="8" class="nav_back" ><a class="nav" href="/artist/?page=${(param.page < totalArtistPages - 1) ? param.page + 1 : param.page}">&gt;</a></td>
     </tr>
     <tr>
         <td>Artist Num</td>

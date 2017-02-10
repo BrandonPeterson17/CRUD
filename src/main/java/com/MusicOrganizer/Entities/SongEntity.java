@@ -80,7 +80,9 @@ public class SongEntity {
     }
 
     public String getString() {
-        String ofTheForce = title + " - " + genre +
+        String ofTheForce = title + " - " + albumEntity.getArtistEntity().getArtist()
+                + " (" + albumEntity.getTitle()
+                + " " + albumEntity.getDate() + ") " + genre +
                 " rating: " + rating + " out of 5";
         return ofTheForce;
     }
