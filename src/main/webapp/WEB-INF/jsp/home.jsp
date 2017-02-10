@@ -111,14 +111,14 @@
             <td><input id="edit_title_${song.id}" class="edit_title" value="${song.title}" /></td>
                 <!--onchange="S{updateAlbums(songDTO.albumEntity.getArtistEntity().getId())}" -->
             <td><select onchange="getAlbums({'songId': '${song.id}'})" id="artist_drop_${song.id}" class="artist_drop">
-                <c:forEach items="${artistRepo}" var="artist">
-                    <c:if test="${artist.getId() == song.albumEntity.getArtistEntity().getId()}"> <!--finds only matching artist to put first-->
-                        <option value="${artist.getId()}">${artist.getArtist()}</option>
+                <c:forEach items="${artistRepo}" var="album">
+                    <c:if test="${album.getId() == song.albumEntity.getArtistEntity().getId()}"> <!--finds only matching artist to put first-->
+                        <option value="${album.getId()}">${album.getArtist()}</option>
                     </c:if>
                 </c:forEach>
-                <c:forEach items="${artistRepo}" var="artist">
-                    <c:if test="${artist.getId() != song.albumEntity.getArtistEntity().getId() && artist.getAlbumEntities().size()>0}"> <!--finds only matching artist to put first-->
-                        <option value="${artist.getId()}">${artist.getArtist()}</option>
+                <c:forEach items="${artistRepo}" var="album">
+                    <c:if test="${album.getId() != song.albumEntity.getArtistEntity().getId() && album.getAlbumEntities().size()>0}"> <!--finds only matching artist to put first-->
+                        <option value="${album.getId()}">${album.getArtist()}</option>
                     </c:if>
 
                 </c:forEach>
@@ -147,7 +147,9 @@
             <td colspan="2"><a href="/addsong"><button class="add">Add Song</button></a></td>
             <td colspan="1"><a href="/addartist"><button class="add">Add Artist</button></a></td>
             <td colspan="1"><a href="/addalbum"><button class="add">Add Album</button></a></td>
-            <td colspan="6"><a href="/search/page/?page=0&title="><button id="search">Search</button></a></td>
+            <td colspan="2"><a href="/album/?page=0"><button id="album">Album View</button></a></td>
+            <td colspan="2"><a href="/artist/?page=0"><button id="artist">Artist View</button></a></td>
+            <td colspan="2"><a href="/search/page/?page=0&title="><button id="search">Search</button></a></td>
         </tr>
     </table>
     <h1 id="projectEuler">${projectEuler}</h1>
@@ -214,18 +216,11 @@
         text-align: center;
     }
 
-    .add, #search {
+    .add, #search, #album, #artist {
         height: 24px;
         width: 100%;
         font-family: "Agency FB", sans-serif;
         font-weight: bold;
-    }
-
-    .add {
-        font-size: 1.2em;
-    }
-
-    #search {
         font-size: 1.2em;
     }
 </style>
