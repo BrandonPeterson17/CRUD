@@ -20,6 +20,8 @@ public interface AlbumRepository extends JpaRepository<AlbumEntity, Long> {
 
     AlbumEntity findByTitleIgnoreCase(String title);
 
+    List<AlbumEntity> findByTitleContainsAllIgnoreCaseOrderByTitle(String title);
+
     AlbumEntity findById(long id);
 
 //    @Query("SELECT a FROM AlbumEntity a LEFT JOIN FETCH a.songEntities WHERE a.songEntities.id=:songId")

@@ -22,8 +22,6 @@
         <tr>
             <td>Song:</td>
             <td><form:input path="title" /></td>
-            <td rowspan="3"><input id="add_btn" type="submit" value="Add Song" /></td>
-            <td rowspan="3"><a id="home_btn" href="/"><input type="button" value="Home"/></a></td>
         </tr>
         <tr>
             <td>Genre:</td>
@@ -41,7 +39,62 @@
                 </c:forEach>
             </form:select></td>
         </tr>
+        <tr>
+            <td><a id="home_btn" href="/"><input type="button" value="Home"/></a></td>
+            <td><input id="add_btn" type="submit" value="Add Song" /></td>
+        </tr>
     </table>
 </form:form>
 </body>
 </html>
+
+
+<style type="text/css">
+    html {
+        font-family: "Agency FB", sans-serif;
+    }
+
+    input {
+        font-family: "Agency FB", sans-serif;
+        font-weight: bold;
+    }
+
+    select {
+        width: 100%;
+        text-align-last: center;
+    }
+
+    input {
+        text-align: center;
+    }
+
+    img {
+        margin-left: 40%;
+    }
+
+    table {
+        border: 2px solid blue;
+        margin: auto;
+    }
+
+    body > * {
+        text-align: center;
+    }
+
+    td {
+        border-bottom: 1px dotted black;
+        border-right: 1px dotted black;
+    }
+
+    .errormsg {
+        color: red;
+    }
+
+    #add_btn, #home_btn {
+        height: 24px;
+        width: 100%;
+        font-family: "Agency FB", sans-serif;
+        font-weight: bold;
+        font-size: 1em;
+    }
+</style>

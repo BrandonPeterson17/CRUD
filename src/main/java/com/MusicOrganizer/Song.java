@@ -19,6 +19,7 @@ public class Song {
     private String listAlbum;
     private String albumId;
     private String artistId;
+    private String type;
     private AlbumEntity albumEntity;
 
     public void setId(String id) {
@@ -99,5 +100,13 @@ public class Song {
 
     public void setListAlbum(String listAlbum) {
         this.listAlbum = listAlbum;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

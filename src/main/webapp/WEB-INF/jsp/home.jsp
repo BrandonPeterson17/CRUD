@@ -149,7 +149,7 @@
             <td colspan="1"><a href="/addalbum"><button class="add">Add Album</button></a></td>
             <td colspan="2"><a href="/album/?page=0"><button id="album">Album View</button></a></td>
             <td colspan="2"><a href="/artist/?page=0"><button id="artist">Artist View</button></a></td>
-            <td colspan="2"><a href="/search/page/?page=0&title="><button id="search">Search</button></a></td>
+            <td colspan="2"><a href="/search"><button id="search">Search</button></a></td>
         </tr>
     </table>
     <h1 id="projectEuler">${projectEuler}</h1>
@@ -224,10 +224,6 @@
         font-size: 1.2em;
     }
 </style>
-
-<script type="text/javascript">
-
-</script>
 
 
 

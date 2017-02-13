@@ -21,4 +21,6 @@ public interface ArtistRepository extends JpaRepository<ArtistEntity, Long> {
     ArtistEntity findById(long id);
 
     List<ArtistEntity> findByArtistIgnoreCase(String artist);
+
+    List<ArtistEntity> findByArtistContainsAllIgnoreCaseOrderByArtist(String artist);
 }

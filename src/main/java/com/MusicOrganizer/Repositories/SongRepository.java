@@ -23,8 +23,18 @@ public interface SongRepository extends JpaRepository<SongEntity, Long> {
 
     SongEntity findById(long id);
 
-    @Query("SELECT s FROM SongEntity s WHERE LOWER(s.title) LIKE LOWER(:title)")
+    @Query("SELECT s FROM SongEntity s WHERE LOWER(s.title) LIKE LOWER(:title) ORDER BY s.title")
     Page<SongEntity> findByTitle(Pageable pageable, @Param("title") String title);
+
+    Page<SongEntity> findByTitleContainsAllIgnoreCaseOrderByTitle(Pageable pageable, String title);
+
+    List<SongEntity> findByTitleContainsAllIgnoreCaseOrderByTitle(String title);
+
+//    @Query("SELECT s FROM SongEntity s WHERE ")
+//    Page<SongEntity> findByAlbum_seqOrderByTitle(long album_seq);
+
+//    @Query("SELECT s FROM SongEntity s WHERE s.album_seq = (SELECT a.album_seq FROM AlbumEntity a WHERE LOWER(a.title) LIKE LOWER(:album)) ORDER BY s.title")
+//    Page<SongEntity> findByAlbum(Pageable pageable, @Param("album") String album);
 
 //    @Query("SELECT a FROM AlbumEntity a LEFT JOIN FETCH a.songEntities WHERE LOWER(SongEntity.title) LIKE LOWER(:title)")
 //    List<AlbumEntity> findByTitle(@Param("title") String title);

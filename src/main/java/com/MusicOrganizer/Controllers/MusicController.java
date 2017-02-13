@@ -104,40 +104,137 @@ public class MusicController {
         return opt;
     }
 
-    @RequestMapping(value = "/search", method = RequestMethod.POST)
-    public String findByTitle(ModelMap modelMap, @RequestParam("page") String page,
-                              @ModelAttribute("songForm") Song songForm) {
-        String title = songForm.getTitle();
-        Pageable pageable = new PageRequest(Integer.parseInt(page), 5, new Sort(Sort.Direction.ASC, "title"));
-        Page<SongEntity> someOfTheSongs = songRepository.findByTitle(pageable, "%" + title + "%");
-        modelMap.put("searchSong", someOfTheSongs);
-        //mo.put("title", title);
+//    private void putSearchSongs(String title, String type, int page, ModelMap modelMap) {
+//        Page<SongEntity> someOfTheSongs;
+//        Pageable pageable = new PageRequest(page, 5);//, new Sort(Sort.Direction.ASC, "title"));
+//        if(type.equals("song")) {
+////            someOfTheSongs = songRepository.findByTitle(pageable, "%" + title + "%");
+////            modelMap.put("searchSong", someOfTheSongs);
+//            someOfTheSongs = songRepository.findByTitleContainsAllIgnoreCaseOrderByTitle(pageable, title);
+//            modelMap.put("searchSong", someOfTheSongs);
+//        } else if(type.equals("album")) {
+//            List<AlbumEntity> albumEntities = albumRepository.findByTitleContainsAllIgnoreCaseOrderByTitle(pageable, title);
+//            for (int i = 0; i < albumEntities.size(); i++) {
+//                List<SongEntity> songEntities;
+//            }
+//
+//        } else if(type.equals("artist")) {
+//
+//
+//        } else {
+//            System.out.println("Erroneous Code!!!");
+//        }
+//    }
+
+    private String formatRow(List<String> strings) {
+        String s = "<tr>";
+        for (int i = 0; i < strings.size(); i++) {
+            s += "<td>" + strings.get(i) + "</td>";
+        }
+        s += "</tr>";
+        return s;
+    }
+
+    private String formatSongEntity(SongEntity se) {
+        List<String> strings = new ArrayList<>();
+        strings.add(String.valueOf(se.getId()));
+        strings.add(se.getTitle());
+        strings.add(se.getArtistEntity().getArtist());
+        strings.add(se.getAlbumEntity().getTitle());
+        strings.add(se.getAlbumEntity().getDate());
+        strings.add(se.getGenre());
+        strings.add(String.valueOf(se.getRating()));
+        return formatRow(strings);
+    }
+
+    @RequestMapping(value = "/searchSongs", method = RequestMethod.POST)
+    @ResponseBody
+    public String searchSongs(@RequestParam("title") String title, @RequestParam("type") String type) {
+        String result;
+        List<String> results = new ArrayList<>();
+        if(type.equals("song")) {
+            List<SongEntity> songEntities = songRepository.findByTitleContainsAllIgnoreCaseOrderByTitle(title);
+            for (SongEntity se: songEntities) {
+                results.add(formatSongEntity(se));
+            }
+        } else if(type.equals("album")) {
+            List<AlbumEntity> albumEntities = albumRepository.findByTitleContainsAllIgnoreCaseOrderByTitle(title);
+            for (AlbumEntity ae: albumEntities)
+                for (SongEntity se: ae.getSongEntities())
+                    results.add(formatSongEntity(se));
+        } else if(type.equals("artist")) {
+            List<ArtistEntity> artistEntities = artistRepository.findByArtistContainsAllIgnoreCaseOrderByArtist(title);
+            for (ArtistEntity art: artistEntities)
+                for (AlbumEntity ae: art.getAlbumEntities())
+                    for (SongEntity se: ae.getSongEntities())
+                        results.add(formatSongEntity(se));
+        } else {
+            System.out.println("Erroneous Code!!!");
+            return null;
+        }
+        result = "";//new String[results.size()];
+        for (int i = 0; i < results.size(); i++) {
+            result += results.get(i);
+            if(i < results.size() - 1)
+                result += ",";
+        }
+        System.out.println(result);
+        return result;
+    }
+
+    @RequestMapping(value = "/search")
+    public String loadSearchPage() {
         return "search";
     }
 
-    @RequestMapping(value = "/search/page", method = RequestMethod.POST)
-    public String turnSearchPage(ModelMap modelMap, @RequestParam("page") String page,
-                                 @RequestParam("title") String title) {
-        Song songForm = new Song();
-        songForm.setTitle(title);
-        modelMap.put("songForm", songForm);
-        Pageable pageable = new PageRequest(Integer.parseInt(page), 5, new Sort(Sort.Direction.ASC, "title"));
-        Page<SongEntity> someOfTheSongs = songRepository.findByTitle(pageable, "%" + title + "%");
-        modelMap.put("searchSong", someOfTheSongs);
-        return "search";
-    }
+//    @RequestMapping(value = "/search", method = RequestMethod.POST)
+//    public String findByType(ModelMap modelMap, @RequestParam("page") String page, @ModelAttribute("songForm") Song songForm) {
+//        String title = songForm.getTitle();
+//        String type = songForm.getType();
+//        modelMap.put("songForm", songForm);
+//        putSearchSongs(title, type, Integer.parseInt(page), modelMap);
+//        System.out.println("search");
+//        return "search";
+//    }
+//
+//    @RequestMapping(value = "/searchload", method = RequestMethod.GET)
+//    public String loadSearch(ModelMap modelMap) {
+//        Song songForm = new Song();
+//        songForm.setTitle("");
+//        songForm.setType("song");
+//        modelMap.addAttribute("songForm", songForm);
+//        putSearchSongs("", "song", 0, modelMap);
+//        System.out.println("search load");
+//        return "/search/?page=0";
+//    }
+//
+//    @RequestMapping(value = "/search/page")
+//    public String turnSearchPage(ModelMap modelMap, @RequestParam("page") String page,
+//                                 @RequestParam("title") String title, @RequestParam("type") String type) {
+//        Song songForm = new Song();
+//        System.out.println("");
+//        songForm.setTitle(title);
+//        songForm.setType(type);
+//        modelMap.put("songForm", songForm);
+//        putSearchSongs(title, type, Integer.parseInt(page), modelMap);
+////        Pageable pageable = new PageRequest(Integer.parseInt(page), 5, new Sort(Sort.Direction.ASC, "title"));
+////        Page<SongEntity> someOfTheSongs = songRepository.findByTitle(pageable, "%" + title + "%");
+////        modelMap.put("searchSong", someOfTheSongs);
+//        System.out.println("search page");
+//        return "search";
+//    }
 
-    @RequestMapping(value = "/search/page", method = RequestMethod.GET)
-    public String loadSearchPage(ModelMap modelMap, @RequestParam("page") String page,
-                                 @RequestParam("title") String title) {
-        Song songForm = new Song();
-        songForm.setTitle(title);
-        modelMap.put("songForm", songForm);
-        Pageable pageable = new PageRequest(0, 5, new Sort(Sort.Direction.ASC, "title"));
-        Page<SongEntity> someOfTheSongs = songRepository.findByTitle(pageable, "%" + title + "%");
-        modelMap.put("searchSong", someOfTheSongs);
-        return "search";
-    }
+//    @RequestMapping(value = "/search/page", method = RequestMethod.GET)
+//    public String loadSearchPage(ModelMap modelMap, @RequestParam("page") String page,
+//                                 @RequestParam("title") String title) {
+//        Song songForm = new Song();
+//        songForm.setTitle(title);
+//        modelMap.put("songForm", songForm);
+//        Pageable pageable = new PageRequest(0, 5, new Sort(Sort.Direction.ASC, "title"));
+//        Page<SongEntity> someOfTheSongs = songRepository.findByTitle(pageable, "%" + title + "%");
+//        modelMap.put("searchSong", someOfTheSongs);
+//        return "search";
+//    }
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     public String loadSearchPage(ModelMap modelMap) {

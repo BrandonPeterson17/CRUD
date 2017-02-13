@@ -37,3 +37,71 @@
 </form:form>
 </body>
 </html>
+
+
+<style type="text/css">
+    html {
+        font-family: "Agency FB", sans-serif;
+    }
+
+    input {
+        font-family: "Agency FB", sans-serif;
+        font-weight: bold;
+    }
+
+    select {
+        width: 100%;
+        text-align-last: center;
+    }
+
+    input {
+        text-align: center;
+    }
+
+    img {
+        margin-left: 40%;
+    }
+
+    table {
+        border: 2px solid blue;
+        margin: auto;
+    }
+
+    body > * {
+        text-align: center;
+    }
+
+    td {
+        border-bottom: 1px dotted black;
+        border-right: 1px dotted black;
+    }
+
+    .errormsg {
+        color: red;
+    }
+
+    .nav {
+        font-size: 10em;
+        color: white;
+        text-decoration: none;
+    }
+
+    .nav_back {
+        background-color: blue;
+        border: 2px solid black;
+    }
+
+    .edit_input {
+        font-family: "Agency FB", sans-serif;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .add, #search, #album, #artist {
+        height: 24px;
+        width: 100%;
+        font-family: "Agency FB", sans-serif;
+        font-weight: bold;
+        font-size: 1.2em;
+    }
+</style>
