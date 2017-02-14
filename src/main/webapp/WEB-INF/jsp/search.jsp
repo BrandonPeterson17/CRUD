@@ -21,7 +21,7 @@
 <body>
     <h1>Search</h1>
     <table id="search_table">
-        <tr><form method="post" onsubmit="loadSongs($('#title_entry').val(), $('#type').val(), 0)">
+        <tr>
             <td>Search Here:</td>
             <td><input id="title_entry" name="title"/></td>
             <td><select id="type">
@@ -29,10 +29,10 @@
                 <option value="album">Album</option>
                 <option value="artist">Artist</option>
             </select></td>
-            <td colspan="2"><input class="btn" type="submit" value="Search"/></td></form>
+            <td colspan="3"><button onclick="loadSongs($('#title_entry').val(), $('#type').val(), 0)" class="btn" id="search_btn">Search</button></td>
             <form method="post" action="/home/?page=0"><td><button class="btn"/>Home</td></form>
         </tr>
-        <tr>
+        <tr class="header">
             <td>ID</td>
             <td>Title</td>
             <td>Artist</td>
@@ -58,7 +58,7 @@
         --%>
         <tr class="footer">
             <td class="nav_back"><button onclick="loadSongs($('#title_entry').val(), $('#type').val(), page-1)" class="nav">&lt;&lt;&lt;</button></td>
-            <td colspan="4">Page <span id="page_info"></span></td>
+            <td colspan="5">Page <span id="page_info"></span></td>
             <td class="nav_back"><button onclick="loadSongs($('#title_entry').val(), $('#type').val(), page+1)" class="nav">&gt;&gt;&gt;</button></td>
         </tr>
     </table>
@@ -106,11 +106,12 @@
             console.log('page: ' + page);
             var howToMeetLadies = '';
             songPage = [];
+            $('.song_data').detach();
             for(var i=page*5; i<songs.length && i<(page*5)+5; i++) {
-                console.log('i=' + i + '; song=' + songs.splice(i));
+                console.log('i=' + i + '; song=' + songs[i]);
 //                howToMeetLadies += songs.splice(i);
 //                songPage.push(songs.splice(i));
-                $('.footer').before($(songs.splice(i)));
+                $('.footer').before($(songs[i]));
             }
             $('#page_info').html('' + (page + 1) + '/' + totalPages);
         }
@@ -134,7 +135,7 @@
             i = j;
             strings.push(sub);
         }
-        console.log(strings.splice(0).splice(0));
+        console.log(strings[0]);
         return strings;
     }
 

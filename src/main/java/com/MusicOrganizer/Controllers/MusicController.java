@@ -127,7 +127,7 @@ public class MusicController {
 //    }
 
     private String formatRow(List<String> strings) {
-        String s = "<tr>";
+        String s = "<tr class=\"song_data\">";
         for (int i = 0; i < strings.size(); i++) {
             s += "<td>" + strings.get(i) + "</td>";
         }
@@ -178,7 +178,6 @@ public class MusicController {
             if(i < results.size() - 1)
                 result += ",";
         }
-        System.out.println(result);
         return result;
     }
 
