@@ -36,8 +36,11 @@ public class MusicController {
     @Autowired
     ArtistRepository artistRepository;
 
+    private String orderByType = "Song Num";
+
     @RequestMapping(value = "/")
     public String home(ModelMap modelMap) {
+        orderByType = "Song Num";
         return "forward:/home/?page=0";
     }
 
@@ -71,6 +74,7 @@ public class MusicController {
     public Page<SongEntity> findAllSongs(@PageableDefault(value = 5, page = 0, sort = {"title"}) Pageable pageable, ModelMap modelMap,
                                       @RequestParam(name = "page", required = false, defaultValue = "0")String pageNum) {
 
+        System.out.println("Song Model Attribute Function Called " + orderByType);
         List<SongEntity> allTheSongs = songRepository.findAll(new Sort(Sort.Direction.ASC, "title"));
         List<AlbumEntity> allTheAlbums = albumRepository.findAll(new Sort(Sort.Direction.ASC, "title"));
         List<ArtistEntity> allTheArtists = artistRepository.findAll(new Sort(Sort.Direction.ASC, "artist"));
@@ -78,10 +82,66 @@ public class MusicController {
         modelMap.put("totalAlbumPages", (albumRepository.findAll().size()+4)/5);
         modelMap.put("totalArtistPages", (artistRepository.findAll().size()+4)/5);
         modelMap.put("artistRepo", artistRepository.findAll());
-        modelMap.put("songTry", allTheSongs);
+        modelMap.put("songTry", sortSongs(allTheSongs, orderByType));
         modelMap.put("albums", allTheAlbums);
         modelMap.put("artists", allTheArtists);
         return null;
+    }
+
+    private List<SongEntity> sortSongs(List<SongEntity> songEntities, String type) {
+        for (int j = 0; j < songEntities.size() - 1; j++) { //bubble sort for the win!!!
+            for (int i = 0; i < songEntities.size() - 1; i++) {
+                switch (type) {
+                    case "Song Num":
+                        if(songEntities.get(i).getId() > songEntities.get(i+1).getId())
+                            swap(i, i+1, songEntities);
+                        break;
+                    case "Title":
+                        if(songEntities.get(i).getTitle().compareToIgnoreCase(songEntities.get(i+1).getTitle()) < 0)
+                            swap(i, i+1, songEntities);
+                        break;
+                    case "Artist":
+                        if(songEntities.get(i).getArtistEntity().getArtist().compareToIgnoreCase(songEntities.get(i+1).getArtistEntity().getArtist()) > 0)
+                            swap(i, i+1, songEntities);
+                        break;
+                    case "Album":
+                        if(songEntities.get(i).getAlbumEntity().getTitle().compareToIgnoreCase(songEntities.get(i+1).getAlbumEntity().getTitle()) > 0)
+                            swap(i, i+1, songEntities);
+                        break;
+                    case "Release Date":
+                        if(songEntities.get(i).getAlbumEntity().getDate().compareToIgnoreCase(songEntities.get(i+1).getAlbumEntity().getDate()) < 0)
+                            swap(i, i+1, songEntities);
+                        break;
+                    case "Genre":
+                        if(songEntities.get(i).getGenre().toLowerCase().compareTo(songEntities.get(i+1).getGenre().toLowerCase()) > 0)
+                            swap(i, i+1, songEntities);
+                    case "Rating":
+                        if(songEntities.get(i).getRating() < songEntities.get(i+1).getRating())
+                            swap(i, i+1, songEntities);
+                        break;
+                    default:
+                        System.out.println("Erroneous Code OMG!!!");
+                }
+            }
+        }
+        System.out.println("Sort Songs Function Called");
+        System.out.println(ummm(songEntities));
+        return songEntities;
+    }
+
+    private String ummm(List<SongEntity> songEntities) {
+        String s = "";
+        for (int i = 0; i < songEntities.size(); i++) {
+            s += songEntities.get(i).getId() + "\t";
+        }
+        return s;
+    }
+
+
+    private void swap(int i, int j, List<SongEntity> songEntities) {
+        SongEntity se = songEntities.get(i);
+        songEntities.set(i, songEntities.get(j));
+        songEntities.set(j, se);
     }
 
     @RequestMapping(value = "/getAlbums", method = RequestMethod.POST)
@@ -103,28 +163,6 @@ public class MusicController {
         }
         return opt;
     }
-
-//    private void putSearchSongs(String title, String type, int page, ModelMap modelMap) {
-//        Page<SongEntity> someOfTheSongs;
-//        Pageable pageable = new PageRequest(page, 5);//, new Sort(Sort.Direction.ASC, "title"));
-//        if(type.equals("song")) {
-////            someOfTheSongs = songRepository.findByTitle(pageable, "%" + title + "%");
-////            modelMap.put("searchSong", someOfTheSongs);
-//            someOfTheSongs = songRepository.findByTitleContainsAllIgnoreCaseOrderByTitle(pageable, title);
-//            modelMap.put("searchSong", someOfTheSongs);
-//        } else if(type.equals("album")) {
-//            List<AlbumEntity> albumEntities = albumRepository.findByTitleContainsAllIgnoreCaseOrderByTitle(pageable, title);
-//            for (int i = 0; i < albumEntities.size(); i++) {
-//                List<SongEntity> songEntities;
-//            }
-//
-//        } else if(type.equals("artist")) {
-//
-//
-//        } else {
-//            System.out.println("Erroneous Code!!!");
-//        }
-//    }
 
     private String formatRow(List<String> strings) {
         String s = "<tr class=\"song_data\">";
@@ -395,7 +433,7 @@ public class MusicController {
         List<String> errs = new ArrayList<>();
 
         for (SongEntity albumSong : albumSongs)
-            if (albumSong.getTitle().toLowerCase().equals(oldSongEnt.getTitle().toLowerCase()))
+            if (albumSong.getTitle().toLowerCase().equals(title.toLowerCase()) && albumSong != oldSongEnt)
                 errs.add(oldSongEnt.getTitle() + " already exists in " + albumSong.getAlbumEntity().getTitle());
 
         if(title.equals(""))
@@ -460,7 +498,7 @@ public class MusicController {
         List<String> errs = new ArrayList<>();
 
         for (AlbumEntity album : artistRepository.findById(artistId).getAlbumEntities())
-            if (album.getTitle().toLowerCase().equals(title.toLowerCase())) {
+            if (album.getTitle().toLowerCase().equals(title.toLowerCase()) && album != oldAlbumEnt) {
                 errs.add(oldAlbumEnt.getTitle() + " already exists by " + album.getArtistEntity().getArtist());
             }
 
@@ -517,7 +555,7 @@ public class MusicController {
         List<String> errs = new ArrayList<>();
 
         for (ArtistEntity artist : artistRepository.findAll())
-            if (artist.getArtist().toLowerCase().equals(name.toLowerCase())) {
+            if (artist.getArtist().toLowerCase().equals(name.toLowerCase()) && artist != oldArtistEnt) {
                 errs.add(name + " already exists.");
             }
 
@@ -536,4 +574,37 @@ public class MusicController {
         artistRepository.save(oldArtistEnt);
         return "";
     }
+
+    @RequestMapping(value = "/sortBy")
+    public String sortBy(@RequestParam(name = "input") String type, ModelMap modelMap) {
+        System.out.println("Sort By Function Called");
+        orderByType = type;
+        modelMap.put("songTry", sortSongs(songRepository.findAll(), type));
+        return "redirect:/home/?page=0";
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
