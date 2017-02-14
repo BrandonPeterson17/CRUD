@@ -74,17 +74,21 @@ public class MusicController {
     public Page<SongEntity> findAllSongs(@PageableDefault(value = 5, page = 0, sort = {"title"}) Pageable pageable, ModelMap modelMap,
                                       @RequestParam(name = "page", required = false, defaultValue = "0")String pageNum) {
         List<SongEntity> allTheSongs;
-        String property;
+        List<String> props = new ArrayList<>();
         switch (orderByType) {
-            case "Song Num": default: property = "id"; break;
-            case "Title": property = "title"; break;
-            case "Genre": property = "genre"; break;
-            case "Artist": property = "albumEntity.artistEntity.artist"; break;
-            case "Album": property = "albumEntity.title"; break;
-            case "Release Date": property = "albumEntity.date"; break;
-            case "Rating": property = "rating"; break;
+            case "Song Num": default: props.add("id"); break;
+            case "Title": props.add("title"); break;
+            case "Genre": props.add("genre"); break;
+            case "Artist": break;
+            case "Album": props.add("albumEntity.title"); break;
+            case "Release Date": props.add("albumEntity.date"); break;
+            case "Rating": props.add("rating"); break;
         }
-        allTheSongs = songRepository.findAll(new Sort(Sort.Direction.ASC, property));
+        props.add("albumEntity.artistEntity.artist");
+        props.add("albumEntity.title");
+        props.add("title");
+
+        allTheSongs = songRepository.findAll(new Sort(Sort.Direction.ASC, props));
         List<AlbumEntity> allTheAlbums = albumRepository.findAll(new Sort(Sort.Direction.ASC, "title"));
         List<ArtistEntity> allTheArtists = artistRepository.findAll(new Sort(Sort.Direction.ASC, "artist"));
         modelMap.put("totalPages", (allTheSongs.size()+4)/5 );
